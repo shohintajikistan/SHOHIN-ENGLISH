@@ -9,25 +9,41 @@
   >
 
   <meta name="theme-color" content="#071c16">
-  <meta name="description" content="SHOHIN ENGLISH — Learn English from A1 to C2">
+
+  <meta
+    name="description"
+    content="SHOHIN ENGLISH — Learn English from A1 to C2"
+  >
 
   <link rel="manifest" href="manifest.json">
 
   <title>SHOHIN ENGLISH</title>
 
   <style>
+
+    /* ==================================================
+       SHOHIN BRAND COLORS — НЕ МЕНЯТЬ
+    ================================================== */
+
     :root {
       --dark: #071c16;
       --dark2: #0d3024;
       --green: #08a56c;
       --green2: #087b53;
       --lime: #baf05b;
+
       --white: #ffffff;
       --text: #eaf5ef;
       --muted: #9fb8ad;
+
       --card: rgba(255,255,255,.06);
       --border: rgba(255,255,255,.08);
     }
+
+
+    /* ==================================================
+       RESET
+    ================================================== */
 
     * {
       box-sizing: border-box;
@@ -35,11 +51,22 @@
       padding: 0;
     }
 
+    html {
+      scroll-behavior: smooth;
+    }
+
     body {
-      font-family: Arial, sans-serif;
+      font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
       background: var(--dark);
       color: var(--text);
+
       min-height: 100vh;
+
+      -webkit-tap-highlight-color: transparent;
     }
 
     button {
@@ -48,13 +75,16 @@
       cursor: pointer;
     }
 
-    /* =========================
+
+    /* ==================================================
        SPLASH
-    ========================= */
+    ================================================== */
 
     #splash {
+
       position: fixed;
       inset: 0;
+
       z-index: 9999;
 
       display: flex;
@@ -68,9 +98,19 @@
           var(--dark2),
           var(--dark) 70%
         );
+
+      transition:
+        opacity .4s ease,
+        visibility .4s ease;
+    }
+
+    #splash.hide {
+      opacity: 0;
+      visibility: hidden;
     }
 
     .logo {
+
       width: 82px;
       height: 82px;
 
@@ -86,34 +126,55 @@
       font-size: 28px;
       font-weight: 900;
 
-      box-shadow: 0 15px 50px rgba(8,165,108,.25);
+      box-shadow:
+        0 15px 50px
+        rgba(8,165,108,.25);
     }
 
     .splash-title {
+
       margin-top: 18px;
+
       font-size: 25px;
       font-weight: 900;
+
       letter-spacing: .5px;
     }
 
     .splash-subtitle {
+
       margin-top: 7px;
+
       color: var(--muted);
+
       font-size: 13px;
     }
 
-    /* =========================
+
+    /* ==================================================
        APP
-    ========================= */
+    ================================================== */
 
     #app {
+
       display: none;
+
       min-height: 100vh;
-      padding-bottom: 85px;
+
+      padding-bottom: 90px;
     }
 
+
+    /* ==================================================
+       HEADER
+    ================================================== */
+
     .header {
-      padding: 20px 18px 15px;
+
+      padding:
+        20px
+        18px
+        15px;
 
       display: flex;
       align-items: center;
@@ -123,38 +184,63 @@
     }
 
     .brand {
+
       display: flex;
       flex-direction: column;
     }
 
     .brand-name {
+
       font-size: 20px;
       font-weight: 900;
     }
 
     .brand-sub {
+
       margin-top: 4px;
+
       color: var(--muted);
+
       font-size: 12px;
     }
 
     .menu-btn {
+
       width: 44px;
       height: 44px;
+
       border-radius: 14px;
 
       background: var(--card);
       color: var(--white);
 
-      font-size: 20px;
+      font-size: 21px;
+
+      transition:
+        transform .15s ease,
+        background .15s ease;
     }
 
-    /* =========================
+    .menu-btn:active {
+
+      transform: scale(.94);
+
+      background:
+        rgba(8,165,108,.18);
+    }
+
+
+    /* ==================================================
        WELCOME
-    ========================= */
+    ================================================== */
 
     .welcome {
-      margin: 5px 16px 18px;
+
+      margin:
+        5px
+        16px
+        18px;
+
       padding: 22px;
 
       border-radius: 24px;
@@ -166,102 +252,166 @@
           rgba(8,165,108,.15)
         );
 
-      border: 1px solid var(--border);
+      border:
+        1px solid var(--border);
     }
 
     .welcome h1 {
+
       font-size: 25px;
+
       line-height: 1.2;
     }
 
     .welcome p {
+
       margin-top: 9px;
+
       color: var(--muted);
+
       line-height: 1.5;
+
       font-size: 14px;
     }
 
     .guest-badge {
+
       display: inline-flex;
+
       margin-top: 16px;
-      padding: 8px 12px;
+
+      padding:
+        8px
+        12px;
 
       border-radius: 999px;
 
-      background: rgba(186,240,91,.12);
+      background:
+        rgba(186,240,91,.12);
+
       color: var(--lime);
 
       font-size: 12px;
+
       font-weight: 700;
     }
 
-    /* =========================
+
+    /* ==================================================
        PROGRESS
-    ========================= */
+    ================================================== */
 
     .progress-card {
-      margin: 0 16px 20px;
+
+      margin:
+        0
+        16px
+        20px;
+
       padding: 18px;
 
       border-radius: 20px;
+
       background: var(--card);
-      border: 1px solid var(--border);
+
+      border:
+        1px solid var(--border);
     }
 
     .progress-top {
+
       display: flex;
-      justify-content: space-between;
-      align-items: center;
+
+      justify-content:
+        space-between;
+
+      align-items:
+        center;
 
       margin-bottom: 12px;
     }
 
     .progress-title {
+
       font-weight: 800;
     }
 
     .progress-percent {
+
       color: var(--lime);
+
       font-weight: 800;
     }
 
     .progress-bar {
+
       height: 8px;
+
       border-radius: 20px;
+
       overflow: hidden;
-      background: rgba(255,255,255,.08);
+
+      background:
+        rgba(255,255,255,.08);
     }
 
     .progress-fill {
+
       width: 0%;
+
       height: 100%;
-      background: var(--green);
+
+      background:
+        var(--green);
+
       border-radius: inherit;
-      transition: width .3s ease;
+
+      transition:
+        width .3s ease;
     }
 
-    /* =========================
-       LEVELS
-    ========================= */
+
+    /* ==================================================
+       SECTION TITLE
+    ================================================== */
 
     .section-title {
-      margin: 0 16px 12px;
+
+      margin:
+        0
+        16px
+        12px;
+
       font-size: 19px;
+
       font-weight: 900;
     }
 
+
+    /* ==================================================
+       LEVELS
+    ================================================== */
+
     .levels {
+
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
+
+      grid-template-columns:
+        repeat(2, 1fr);
+
       gap: 12px;
 
-      padding: 0 16px;
+      padding:
+        0
+        16px;
     }
 
     .level {
+
       position: relative;
 
       min-height: 125px;
+
       padding: 17px;
 
       text-align: left;
@@ -269,82 +419,134 @@
       border-radius: 20px;
 
       background: var(--card);
+
       color: var(--white);
 
-      border: 1px solid var(--border);
+      border:
+        1px solid var(--border);
 
-      transition: transform .15s ease,
-                  border-color .15s ease;
+      transition:
+        transform .15s ease,
+        border-color .15s ease,
+        background .15s ease;
+    }
+
+    .level:hover {
+
+      border-color:
+        rgba(8,165,108,.4);
+
+      background:
+        rgba(8,165,108,.08);
     }
 
     .level:active {
-      transform: scale(.97);
+
+      transform:
+        scale(.97);
     }
 
     .level-code {
+
       font-size: 25px;
+
       font-weight: 900;
+
       color: var(--lime);
     }
 
     .level-name {
+
       margin-top: 8px;
+
       font-size: 14px;
+
       font-weight: 800;
     }
 
     .level-lessons {
+
       margin-top: 6px;
+
       color: var(--muted);
+
       font-size: 11px;
     }
 
-    /* =========================
+
+    /* ==================================================
        DAILY
-    ========================= */
+    ================================================== */
 
     .daily {
-      margin: 22px 16px;
+
+      margin:
+        22px
+        16px;
+
       padding: 18px;
 
       border-radius: 20px;
 
-      background: linear-gradient(
-        135deg,
-        var(--green2),
-        var(--green)
-      );
+      background:
+        linear-gradient(
+          135deg,
+          var(--green2),
+          var(--green)
+        );
     }
 
     .daily-title {
+
       font-size: 17px;
+
       font-weight: 900;
     }
 
     .daily-text {
+
       margin-top: 6px;
+
       font-size: 13px;
+
       opacity: .9;
     }
 
     .start-btn {
+
       margin-top: 15px;
-      padding: 12px 17px;
+
+      padding:
+        12px
+        17px;
 
       border-radius: 13px;
 
       background: var(--lime);
+
       color: var(--dark);
 
       font-weight: 900;
+
+      transition:
+        transform .15s ease;
     }
 
-    /* =========================
-       BOTTOM NAV
-    ========================= */
+    .start-btn:active {
+
+      transform:
+        scale(.95);
+    }
+
+
+    /* ==================================================
+       BOTTOM NAVIGATION
+    ================================================== */
 
     .bottom-nav {
+
       position: fixed;
+
       left: 0;
       right: 0;
       bottom: 0;
@@ -352,143 +554,250 @@
       height: 72px;
 
       display: flex;
-      justify-content: space-around;
-      align-items: center;
 
-      background: rgba(7,28,22,.96);
-      backdrop-filter: blur(14px);
+      justify-content:
+        space-around;
 
-      border-top: 1px solid var(--border);
+      align-items:
+        center;
+
+      background:
+        rgba(7,28,22,.96);
+
+      backdrop-filter:
+        blur(14px);
+
+      border-top:
+        1px solid var(--border);
 
       z-index: 1000;
     }
 
     .nav-btn {
+
       min-width: 70px;
 
       display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
+
+      align-items:
+        center;
+
+      justify-content:
+        center;
+
+      flex-direction:
+        column;
 
       gap: 4px;
 
-      background: transparent;
-      color: var(--muted);
+      background:
+        transparent;
+
+      color:
+        var(--muted);
 
       font-size: 11px;
+
+      transition:
+        color .15s ease;
     }
 
     .nav-icon {
+
       font-size: 21px;
     }
 
     .nav-btn.active {
-      color: var(--lime);
+
+      color:
+        var(--lime);
     }
 
-    /* =========================
-       MENU
-    ========================= */
+
+    /* ==================================================
+       SIDE MENU
+    ================================================== */
 
     #menu {
+
       position: fixed;
+
       inset: 0;
 
       z-index: 5000;
 
       display: none;
 
-      background: rgba(0,0,0,.65);
+      background:
+        rgba(0,0,0,.65);
+    }
+
+    #menu.show {
+
+      display: block;
     }
 
     .menu-panel {
+
       position: absolute;
+
       top: 0;
       right: 0;
       bottom: 0;
 
-      width: min(330px, 88%);
+      width:
+        min(330px,88%);
 
-      padding: 25px 18px;
+      padding:
+        25px
+        18px;
 
-      background: var(--dark2);
+      background:
+        var(--dark2);
 
-      box-shadow: -20px 0 50px rgba(0,0,0,.25);
+      box-shadow:
+        -20px
+        0
+        50px
+        rgba(0,0,0,.25);
+
+      animation:
+        menuIn .2s ease;
+    }
+
+    @keyframes menuIn {
+
+      from {
+
+        transform:
+          translateX(100%);
+
+      }
+
+      to {
+
+        transform:
+          translateX(0);
+
+      }
+
     }
 
     .menu-head {
+
       display: flex;
-      align-items: center;
-      justify-content: space-between;
+
+      align-items:
+        center;
+
+      justify-content:
+        space-between;
 
       margin-bottom: 25px;
     }
 
     .menu-head h2 {
+
       font-size: 21px;
     }
 
     .close-menu {
+
       width: 42px;
       height: 42px;
 
       border-radius: 13px;
 
       background: var(--card);
+
       color: var(--white);
 
       font-size: 20px;
     }
 
     .menu-item {
+
       width: 100%;
 
-      padding: 15px 14px;
+      padding:
+        15px
+        14px;
+
       margin-bottom: 8px;
 
       display: flex;
-      align-items: center;
+
+      align-items:
+        center;
+
       gap: 12px;
 
       border-radius: 14px;
 
-      background: var(--card);
-      color: var(--text);
+      background:
+        var(--card);
 
-      text-align: left;
+      color:
+        var(--text);
+
+      text-align:
+        left;
     }
 
     .menu-item small {
+
       display: block;
+
       margin-top: 3px;
-      color: var(--muted);
+
+      color:
+        var(--muted);
     }
 
-    @media (min-width: 700px) {
+
+    /* ==================================================
+       RESPONSIVE
+    ================================================== */
+
+    @media (min-width:700px) {
+
       #app {
+
         max-width: 700px;
-        margin: auto;
+
+        margin:
+          0 auto;
       }
 
       .bottom-nav {
+
         left: 50%;
         right: auto;
+
         width: 700px;
-        transform: translateX(-50%);
+
+        transform:
+          translateX(-50%);
       }
+
     }
+
   </style>
 </head>
 
+
 <body>
 
-  <!-- =========================
+
+  <!-- ==================================================
        SPLASH
-  ========================= -->
+  ================================================== -->
 
   <div id="splash">
-    <div class="logo">SH</div>
+
+    <div class="logo">
+      SH
+    </div>
 
     <div class="splash-title">
       SHOHIN ENGLISH
@@ -497,18 +806,23 @@
     <div class="splash-subtitle">
       Learn English • A1 — C2
     </div>
+
   </div>
 
 
-  <!-- =========================
-       APP
-  ========================= -->
+  <!-- ==================================================
+       MAIN APP
+  ================================================== -->
 
   <main id="app">
+
+
+    <!-- HEADER -->
 
     <header class="header">
 
       <div class="brand">
+
         <div class="brand-name">
           SHOHIN ENGLISH
         </div>
@@ -516,7 +830,9 @@
         <div class="brand-sub">
           English learning platform
         </div>
+
       </div>
+
 
       <button
         class="menu-btn"
@@ -568,11 +884,14 @@
 
       </div>
 
+
       <div class="progress-bar">
+
         <div
           class="progress-fill"
           id="progressFill"
         ></div>
+
       </div>
 
     </section>
@@ -584,43 +903,129 @@
       Choose your level
     </h2>
 
+
     <section class="levels">
 
-      <button class="level" data-level="A1">
-        <div class="level-code">A1</div>
-        <div class="level-name">Beginner</div>
-        <div class="level-lessons">20 lessons</div>
+
+      <button
+        class="level"
+        data-level="A1"
+      >
+
+        <div class="level-code">
+          A1
+        </div>
+
+        <div class="level-name">
+          Beginner
+        </div>
+
+        <div class="level-lessons">
+          20 lessons
+        </div>
+
       </button>
 
-      <button class="level" data-level="A2">
-        <div class="level-code">A2</div>
-        <div class="level-name">Elementary</div>
-        <div class="level-lessons">25 lessons</div>
+
+      <button
+        class="level"
+        data-level="A2"
+      >
+
+        <div class="level-code">
+          A2
+        </div>
+
+        <div class="level-name">
+          Elementary
+        </div>
+
+        <div class="level-lessons">
+          25 lessons
+        </div>
+
       </button>
 
-      <button class="level" data-level="B1">
-        <div class="level-code">B1</div>
-        <div class="level-name">Intermediate</div>
-        <div class="level-lessons">30 lessons</div>
+
+      <button
+        class="level"
+        data-level="B1"
+      >
+
+        <div class="level-code">
+          B1
+        </div>
+
+        <div class="level-name">
+          Intermediate
+        </div>
+
+        <div class="level-lessons">
+          30 lessons
+        </div>
+
       </button>
 
-      <button class="level" data-level="B2">
-        <div class="level-code">B2</div>
-        <div class="level-name">Upper-Intermediate</div>
-        <div class="level-lessons">30 lessons</div>
+
+      <button
+        class="level"
+        data-level="B2"
+      >
+
+        <div class="level-code">
+          B2
+        </div>
+
+        <div class="level-name">
+          Upper-Intermediate
+        </div>
+
+        <div class="level-lessons">
+          30 lessons
+        </div>
+
       </button>
 
-      <button class="level" data-level="C1">
-        <div class="level-code">C1</div>
-        <div class="level-name">Advanced</div>
-        <div class="level-lessons">35 lessons</div>
+
+      <button
+        class="level"
+        data-level="C1"
+      >
+
+        <div class="level-code">
+          C1
+        </div>
+
+        <div class="level-name">
+          Advanced
+        </div>
+
+        <div class="level-lessons">
+          35 lessons
+        </div>
+
       </button>
 
-      <button class="level" data-level="C2">
-        <div class="level-code">C2</div>
-        <div class="level-name">Proficiency</div>
-        <div class="level-lessons">40 lessons</div>
+
+      <button
+        class="level"
+        data-level="C2"
+      >
+
+        <div class="level-code">
+          C2
+        </div>
+
+        <div class="level-name">
+          Proficiency
+        </div>
+
+        <div class="level-lessons">
+          40 lessons
+        </div>
+
       </button>
+
 
     </section>
 
@@ -637,7 +1042,10 @@
         Build your English habit every day.
       </div>
 
-      <button class="start-btn" id="startLearning">
+      <button
+        class="start-btn"
+        id="startLearning"
+      >
         Start learning
       </button>
 
@@ -648,46 +1056,89 @@
 
     <nav class="bottom-nav">
 
-      <button class="nav-btn active">
-        <span class="nav-icon">⌂</span>
+
+      <button
+        class="nav-btn active"
+        id="homeNav"
+      >
+
+        <span class="nav-icon">
+          ⌂
+        </span>
+
         Home
+
       </button>
 
-      <button class="nav-btn" id="lessonsNav">
-        <span class="nav-icon">▣</span>
+
+      <button
+        class="nav-btn"
+        id="lessonsNav"
+      >
+
+        <span class="nav-icon">
+          ▣
+        </span>
+
         Lessons
+
       </button>
 
-      <button class="nav-btn">
-        <span class="nav-icon">★</span>
+
+      <button
+        class="nav-btn"
+        id="progressNav"
+      >
+
+        <span class="nav-icon">
+          ★
+        </span>
+
         Progress
+
       </button>
 
-      <button class="nav-btn" id="profileNav">
-        <span class="nav-icon">●</span>
+
+      <button
+        class="nav-btn"
+        id="profileNav"
+      >
+
+        <span class="nav-icon">
+          ●
+        </span>
+
         Profile
+
       </button>
+
 
     </nav>
+
 
   </main>
 
 
-  <!-- =========================
-       MENU
-  ========================= -->
+  <!-- ==================================================
+       SIDE MENU
+  ================================================== -->
 
   <div id="menu">
 
+
     <aside class="menu-panel">
+
 
       <div class="menu-head">
 
-        <h2>SHOHIN ENGLISH</h2>
+        <h2>
+          SHOHIN ENGLISH
+        </h2>
 
         <button
           class="close-menu"
           id="closeMenu"
+          aria-label="Close menu"
         >
           ×
         </button>
@@ -696,225 +1147,462 @@
 
 
       <button class="menu-item">
+
         👤
+
         <span>
+
           Guest profile
-          <small>No account required</small>
+
+          <small>
+            No account required
+          </small>
+
         </span>
+
       </button>
 
 
       <button class="menu-item">
+
         📚
+
         <span>
+
           Lessons
-          <small>Continue learning</small>
+
+          <small>
+            Continue learning
+          </small>
+
         </span>
+
       </button>
 
 
       <button class="menu-item">
+
         🏆
+
         <span>
+
           Achievements
-          <small>Your learning results</small>
+
+          <small>
+            Your learning results
+          </small>
+
         </span>
+
       </button>
 
 
       <button class="menu-item">
+
         🔥
+
         <span>
+
           Streak
-          <small>Keep learning every day</small>
+
+          <small>
+            Keep learning every day
+          </small>
+
         </span>
+
       </button>
 
 
       <button class="menu-item">
+
         ☁️
+
         <span>
+
           Save progress
-          <small>Account can be added later</small>
+
+          <small>
+            Account can be added later
+          </small>
+
         </span>
+
       </button>
 
 
       <button class="menu-item">
+
         ⚙️
+
         <span>
+
           Settings
-          <small>App preferences</small>
+
+          <small>
+            App preferences
+          </small>
+
         </span>
+
       </button>
+
 
     </aside>
 
   </div>
 
 
-  <!-- =========================
-       BASIC START LOGIC
-  ========================= -->
+  <!-- ==================================================
+       STORAGE
+  ================================================== -->
+
+  <script src="js/storage.js"></script>
+
+
+  <!-- ==================================================
+       APP LOGIC
+  ================================================== -->
 
   <script>
 
-    const splash = document.getElementById("splash");
-    const app = document.getElementById("app");
+    /* ================================================
+       ELEMENTS
+    ================================================ */
 
-    const menu = document.getElementById("menu");
-    const openMenu = document.getElementById("openMenu");
-    const closeMenu = document.getElementById("closeMenu");
+    const splash =
+      document.getElementById("splash");
 
-    /*
-      SHOHIN ENGLISH
-      GUEST MODE
+    const app =
+      document.getElementById("app");
 
-      No login.
-      No registration.
-      No Firebase Auth required.
+    const menu =
+      document.getElementById("menu");
 
-      Progress will later be connected
-      to storage.js / localStorage.
-    */
+    const openMenu =
+      document.getElementById("openMenu");
 
-    window.addEventListener("load", () => {
-
-      setTimeout(() => {
-
-        splash.style.display = "none";
-        app.style.display = "block";
-
-      }, 1000);
-
-    });
+    const closeMenu =
+      document.getElementById("closeMenu");
 
 
-    /* MENU */
+    /* ================================================
+       START APPLICATION
+    ================================================ */
 
-    openMenu.addEventListener("click", () => {
-      menu.style.display = "block";
-    });
+    window.addEventListener(
+      "load",
+      () => {
 
+        setTimeout(
+          () => {
 
-    closeMenu.addEventListener("click", () => {
-      menu.style.display = "none";
-    });
+            splash.classList.add("hide");
 
+            app.style.display =
+              "block";
 
-    menu.addEventListener("click", (event) => {
+            loadProgress();
 
-      if (event.target === menu) {
-        menu.style.display = "none";
+          },
+          1000
+        );
+
       }
-
-    });
-
-
-    /* LEVEL SELECTION */
-
-    document.querySelectorAll(".level").forEach(level => {
-
-      level.addEventListener("click", () => {
-
-        const selectedLevel = level.dataset.level;
-
-        localStorage.setItem(
-          "shohinEnglishSelectedLevel",
-          selectedLevel
-        );
-
-        alert(
-          "Level " +
-          selectedLevel +
-          " selected.\nLessons will open here."
-        );
-
-      });
-
-    });
+    );
 
 
-    /* START LEARNING */
+    /* ================================================
+       MENU
+    ================================================ */
 
-    document
-      .getElementById("startLearning")
-      .addEventListener("click", () => {
+    openMenu.addEventListener(
+      "click",
+      () => {
 
-        const savedLevel =
-          localStorage.getItem(
-            "shohinEnglishSelectedLevel"
-          );
+        menu.classList.add("show");
 
-        if (savedLevel) {
+      }
+    );
 
-          alert(
-            "Continue with " +
-            savedLevel +
-            " lessons."
-          );
 
-        } else {
+    closeMenu.addEventListener(
+      "click",
+      () => {
 
-          alert(
-            "Choose your English level first."
+        menu.classList.remove("show");
+
+      }
+    );
+
+
+    menu.addEventListener(
+      "click",
+      (event) => {
+
+        if (
+          event.target === menu
+        ) {
+
+          menu.classList.remove(
+            "show"
           );
 
         }
 
-      });
+      }
+    );
 
 
-    /* SIMPLE LOCAL PROGRESS */
+    /* ================================================
+       LOAD LOCAL PROGRESS
+    ================================================ */
 
-    function loadLocalProgress() {
+    function loadProgress() {
 
-      const progress =
-        JSON.parse(
-          localStorage.getItem(
-            "shohinEnglishProgress"
-          )
-        ) || {
-          percent: 0
-        };
+      if (
+        !window.SHOHINStorage
+      ) {
+
+        console.warn(
+          "SHOHINStorage not found"
+        );
+
+        return;
+
+      }
+
+
+      const data =
+        SHOHINStorage.get();
+
+
+      const completed =
+        data.completedLessons.length;
+
+
+      const totalLessons =
+        180;
 
 
       const percent =
-        Math.max(
-          0,
-          Math.min(100, Number(progress.percent) || 0)
+        Math.min(
+          100,
+          Math.round(
+            (
+              completed /
+              totalLessons
+            ) * 100
+          )
         );
 
 
       document.getElementById(
         "progressPercent"
-      ).textContent = percent + "%";
+      ).textContent =
+        percent + "%";
 
 
       document.getElementById(
         "progressFill"
-      ).style.width = percent + "%";
+      ).style.width =
+        percent + "%";
 
     }
 
 
-    loadLocalProgress();
+    /* ================================================
+       LEVEL SELECTION
+    ================================================ */
+
+    document
+      .querySelectorAll(".level")
+      .forEach(
+        (levelButton) => {
+
+          levelButton.addEventListener(
+            "click",
+            () => {
+
+              const level =
+                levelButton.dataset.level;
+
+
+              if (
+                window.SHOHINStorage
+              ) {
+
+                SHOHINStorage.setLevel(
+                  level
+                );
+
+              }
+
+
+              alert(
+                "Level " +
+                level +
+                " selected.\n\n" +
+                "Next step: lessons."
+              );
+
+
+              loadProgress();
+
+            }
+          );
+
+        }
+      );
+
+
+    /* ================================================
+       START LEARNING
+    ================================================ */
+
+    document
+      .getElementById(
+        "startLearning"
+      )
+      .addEventListener(
+        "click",
+        () => {
+
+          let level = null;
+
+
+          if (
+            window.SHOHINStorage
+          ) {
+
+            level =
+              SHOHINStorage.getLevel();
+
+          }
+
+
+          if (!level) {
+
+            alert(
+              "Choose your English level first."
+            );
+
+            return;
+
+          }
+
+
+          alert(
+            "Continue with " +
+            level +
+            " lessons."
+          );
+
+        }
+      );
+
+
+    /* ================================================
+       BOTTOM NAV
+    ================================================ */
+
+    document
+      .getElementById("homeNav")
+      .addEventListener(
+        "click",
+        () => {
+
+          window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+          });
+
+        }
+      );
+
+
+    document
+      .getElementById("lessonsNav")
+      .addEventListener(
+        "click",
+        () => {
+
+          alert(
+            "Lessons section will open here."
+          );
+
+        }
+      );
+
+
+    document
+      .getElementById("progressNav")
+      .addEventListener(
+        "click",
+        () => {
+
+          const data =
+            window.SHOHINStorage
+              ? SHOHINStorage.get()
+              : null;
+
+
+          if (!data) {
+            return;
+          }
+
+
+          alert(
+            "Lessons completed: " +
+            data.statistics.lessonsCompleted +
+            "\n\n" +
+
+            "Words learned: " +
+            data.statistics.wordsLearned +
+            "\n\n" +
+
+            "Tests completed: " +
+            data.statistics.testsCompleted +
+            "\n\n" +
+
+            "Current streak: " +
+            data.streak.current
+          );
+
+        }
+      );
+
+
+    document
+      .getElementById("profileNav")
+      .addEventListener(
+        "click",
+        () => {
+
+          alert(
+            "Guest profile\n\n" +
+            "Your progress is saved " +
+            "on this device."
+          );
+
+        }
+      );
+
+
+    /* ================================================
+       INITIALIZE STORAGE
+    ================================================ */
+
+    if (
+      window.SHOHINStorage
+    ) {
+
+      SHOHINStorage.get();
+
+    }
 
   </script>
 
-
-  <!--
-    Later we will connect:
-
-    js/app.js
-    js/storage.js
-    js/lessons.js
-    js/tests.js
-
-    IMPORTANT:
-    No mandatory login.
-    Guest mode is the default.
-  -->
 
 </body>
 </html>
