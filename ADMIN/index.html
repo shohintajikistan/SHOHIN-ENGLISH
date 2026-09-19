@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="theme-color"
+        content="#071c16"
+    >
+
+    <title>SHOHIN ENGLISH — Admin</title>
+
+    <link
+        rel="stylesheet"
+        href="css/admin.css"
+    >
+</head>
+
+<body>
+
+<div class="admin-layout">
+
+    <!-- =====================================================
+         SIDEBAR
+         ===================================================== -->
+
+    <aside class="admin-sidebar">
+
+        <div class="sidebar-brand">
+
+            <div class="brand-mark">
+                SH
+            </div>
+
+            <div class="brand-text">
+
+                <div class="brand-title">
+                    SHOHIN ENGLISH
+                </div>
+
+                <div class="brand-subtitle">
+                    ADMIN PANEL
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <nav class="sidebar-nav">
+
+            <div class="nav-label">
+                Main
+            </div>
+
+            <button
+                class="sidebar-link active"
+                data-section="dashboard"
+            >
+                <span class="nav-icon">⌂</span>
+                <span class="nav-text">Dashboard</span>
+            </button>
+
+
+            <button
+                class="sidebar-link"
+                data-section="levels"
+            >
+                <span class="nav-icon">◆</span>
+                <span class="nav-text">Levels</span>
+            </button>
+
+
+            <button
+                class="sidebar-link"
+                data-section="lessons"
+            >
+                <span class="nav-icon">▤</span>
+                <span class="nav-text">Lessons</span>
+            </button>
+
+
+            <button
+                class="sidebar-link"
+                data-section="videos"
+            >
+                <span class="nav-icon">▶</span>
+                <span class="nav-text">Videos</span>
+            </button>
+
+
+            <button
+                class="sidebar-link"
+                data-section="vocabulary"
+            >
+                <span class="nav-icon">A</span>
+                <span class="nav-text">Vocabulary</span>
+            </button>
+
+
+            <div class="nav-label">
+                Learning
+            </div>
+
+
+            <button
+                class="sidebar-link"
+                data-section="exercises"
+            >
+                <span class="nav-icon">✓</span>
+                <span class="nav-text">Exercises</span>
+            </button>
+
+
+            <button
+                class="sidebar-link"
+                data-section="tests"
+            >
+                <span class="nav-icon">▣</span>
+                <span class="nav-text">Tests</span>
+            </button>
+
+
+            <div class="nav-label">
+                System
+            </div>
+
+
+            <button
+                class="sidebar-link"
+                data-section="users"
+            >
+                <span class="nav-icon">●</span>
+                <span class="nav-text">Users</span>
+            </button>
+
+
+            <button
+                class="sidebar-link"
+                data-section="settings"
+            >
+                <span class="nav-icon">⚙</span>
+                <span class="nav-text">Settings</span>
+            </button>
+
+        </nav>
+
+
+        <div class="sidebar-footer">
+
+            <div class="admin-user">
+
+                <div class="admin-avatar">
+                    SH
+                </div>
+
+                <div class="admin-user-info">
+
+                    <div class="admin-user-name">
+                        SHOHIN Admin
+                    </div>
+
+                    <div class="admin-user-role">
+                        Administrator
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </aside>
+
+
+    <!-- =====================================================
+         SIDEBAR OVERLAY
+         ===================================================== -->
+
+    <div class="sidebar-overlay"></div>
+
+
+    <!-- =====================================================
+         MAIN
+         ===================================================== -->
+
+    <main class="admin-main">
+
+
+        <!-- =================================================
+             HEADER
+             ================================================= -->
+
+        <header class="admin-header">
+
+            <div class="header-left">
+
+                <button
+                    class="mobile-menu-btn"
+                    data-mobile-menu
+                    aria-label="Open menu"
+                >
+                    ☰
+                </button>
+
+
+                <div>
+
+                    <div
+                        class="header-title"
+                        data-admin-title
+                    >
+                        Dashboard
+                    </div>
+
+                    <div
+                        class="header-subtitle"
+                        data-admin-subtitle
+                    >
+                        SHOHIN ENGLISH administration
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="header-actions">
+
+                <button
+                    class="btn btn-secondary"
+                    data-action="refresh-data"
+                >
+                    ↻ Refresh
+                </button>
+
+            </div>
+
+        </header>
+
+
+        <!-- =================================================
+             CONTENT
+             ================================================= -->
+
+        <div class="admin-content">
+
+
+            <!-- =================================================
+                 DASHBOARD
+                 ================================================= -->
+
+            <section
+                class="admin-section active"
+                id="dashboard-section"
+            >
+
+                <div class="page-heading">
+
+                    <div>
+
+                        <h1>
+                            Dashboard
+                        </h1>
+
+                        <p>
+                            Manage SHOHIN ENGLISH from one place.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <!-- STATS -->
+
+                <div class="stats-grid">
+
+
+                    <div class="stat-card">
+
+                        <div class="stat-top">
+
+                            <div class="stat-icon">
+                                ◆
+                            </div>
+
+                        </div>
+
+                        <div class="stat-label">
+                            Levels
+                        </div>
+
+                        <div
+                            class="stat-value"
+                            data-stat-levels
+                        >
+                            6
+                        </div>
+
+                        <div class="stat-change">
+                            A1 → C2
+                        </div>
+
+                    </div>
+
+
+                    <div class="stat-card">
+
+                        <div class="stat-top">
+
+                            <div class="stat-icon">
+                                ▤
+                            </div>
+
+                        </div>
+
+                        <div class="stat-label">
+                            Lessons
+                        </div>
+
+                        <div
+                            class="stat-value"
+                            data-stat-lessons
+                        >
+                            0
+                        </div>
+
+                        <div class="stat-change">
+                            180 planned
+                        </div>
+
+                    </div>
+
+
+                    <div class="stat-card">
+
+                        <div class="stat-top">
+
+                            <div class="stat-icon">
+                                ▶
+                            </div>
+
+                        </div>
+
+                        <div class="stat-label">
+                            Videos
+                        </div>
+
+                        <div
+                            class="stat-value"
+                            data-stat-videos
+                        >
+                            0
+                        </div>
+
+                        <div class="stat-change">
+                            Ready for content
+                        </div>
+
+                    </div>
+
+
+                    <div class="stat-card">
+
+                        <div class="stat-top">
+
+                            <div class="stat-icon">
+                                A
+                            </div>
+
+                        </div>
+
+                        <div class="stat-label">
+                            Vocabulary
+                        </div>
+
+                        <div
+                            class="stat-value"
+                            data-stat-vocabulary
+                        >
+                            0
+                        </div>
+
+                        <div class="stat-change">
+                            Ready for content
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- DASHBOARD GRID -->
+
+                <div class="dashboard-grid">
+
+
+                    <!-- QUICK ACTIONS -->
+
+                    <div class="admin-card">
+
+                        <div class="card-header">
+
+                            <div>
+
+                                <div class="card-title">
+                                    Quick Actions
+                                </div>
+
+                                <div class="card-subtitle">
+                                    Create learning content
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="card-body">
+
+                            <div class="quick-actions">
+
+
+                                <button
+                                    class="quick-action"
+                                    data-action="add-lesson"
+                                >
+
+                                    <div class="quick-action-icon">
+                                        📚
+                                    </div>
+
+                                    <div class="quick-action-title">
+                                        Add Lesson
+                                    </div>
+
+                                    <div class="quick-action-description">
+                                        Create a new English lesson
+                                    </div>
+
+                                </button>
+
+
+                                <button
+                                    class="quick-action"
+                                    data-action="add-video"
+                                >
+
+                                    <div class="quick-action-icon">
+                                        🎬
+                                    </div>
+
+                                    <div class="quick-action-title">
+                                        Add Video
+                                    </div>
+
+                                    <div class="quick-action-description">
+                                        Add a learning video
+                                    </div>
+
+                                </button>
+
+
+                                <button
+                                    class="quick-action"
+                                    data-action="add-vocabulary"
+                                >
+
+                                    <div class="quick-action-icon">
+                                        🔤
+                                    </div>
+
+                                    <div class="quick-action-title">
+                                        Add Vocabulary
+                                    </div>
+
+                                    <div class="quick-action-description">
+                                        Add words and translations
+                                    </div>
+
+                                </button>
+
+
+                                <button
+                                    class="quick-action"
+                                    data-action="add-exercise"
+                                >
+
+                                    <div class="quick-action-icon">
+                                        ✏️
+                                    </div>
+
+                                    <div class="quick-action-title">
+                                        Add Exercise
+                                    </div>
+
+                                    <div class="quick-action-description">
+                                        Create an exercise
+                                    </div>
+
+                                </button>
+
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- SYSTEM STATUS -->
+
+                    <div class="admin-card">
+
+                        <div class="card-header">
+
+                            <div>
+
+                                <div class="card-title">
+                                    System Status
+                                </div>
+
+                                <div class="card-subtitle">
+                                    Foundation status
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="card-body">
+
+                            <div class="status-list">
+
+
+                                <div class="status-row">
+
+                                    <div class="status-name">
+                                        Admin Panel
+                                    </div>
+
+                                    <div class="status-value">
+
+                                        <span class="status-dot"></span>
+
+                                        Ready
+
+                                    </div>
+
+                                </div>
+
+
+                                <div class="status-row">
+
+                                    <div class="status-name">
+                                        Course Structure
+                                    </div>
+
+                                    <div class="status-value">
+
+                                        <span class="status-dot"></span>
+
+                                        Ready
+
+                                    </div>
+
+                                </div>
+
+
+                                <div class="status-row">
+
+                                    <div class="status-name">
+                                        Local Data
+                                    </div>
+
+                                    <div class="status-value">
+
+                                        <span class="status-dot"></span>
+
+                                        Connected
+
+                                    </div>
+
+                                </div>
+
+
+                                <div class="status-row">
+
+                                    <div class="status-name">
+                                        Backend
+                                    </div>
+
+                                    <div class="status-value">
+
+                                        <span class="status-dot warning"></span>
+
+                                        Not connected
+
+                                    </div>
+
+                                </div>
+
+
+                                <div class="status-row">
+
+                                    <div class="status-name">
+                                        Authentication
+                                    </div>
+
+                                    <div class="status-value">
+
+                                        <span class="status-dot warning"></span>
+
+                                        Future
+
+                                    </div>
+
+                                </div>
+
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 LEVELS
+                 ================================================= -->
+
+            <section
+                class="admin-section"
+                id="levels-section"
+            >
+
+                <div class="page-heading">
+
+                    <div>
+
+                        <h1>
+                            Levels
+                        </h1>
+
+                        <p>
+                            Manage the six CEFR levels.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    class="levels-grid"
+                    data-levels-list
+                ></div>
+
+            </section>
+
+
+            <!-- =================================================
+                 LESSONS
+                 ================================================= -->
+
+            <section
+                class="admin-section"
+                id="lessons-section"
+            >
+
+                <div class="page-heading">
+
+                    <div>
+
+                        <h1>
+                            Lessons
+                        </h1>
+
+                        <p>
+                            Manage all 180 planned lessons.
+                        </p>
+
+                    </div>
+
+
+                    <button
+                        class="btn btn-primary"
+                        data-action="add-lesson"
+                    >
+                        + Add Lesson
+                    </button>
+
+                </div>
+
+
+                <div
+                    class="admin-card"
+                    data-lessons-table
+                ></div>
+
+            </section>
+
+
+            <!-- =================================================
+                 VIDEOS
+                 ================================================= -->
+
+            <section
+                class="admin-section"
+                id="videos-section"
+            >
+
+                <div class="page-heading">
+
+                    <div>
+
+                        <h1>
+                            Videos
+                        </h1>
+
+                        <p>
+                            Manage learning videos by level and lesson.
+                        </p>
+
+                    </div>
+
+
+                    <button
+                        class="btn btn-primary"
+                        data-action="add-video"
+                    >
+                        + Add Video
+                    </button>
+
+                </div>
+
+
+                <div
+                    class="admin-card"
+                    data-videos-table
+                ></div>
+
+            </section>
+
+
+            <!-- =================================================
+                 VOCABULARY
+                 ================================================= -->
+
+            <section
+                class="admin-section"
+                id="vocabulary-section"
+            >
+
+                <div class="page-heading">
+
+                    <div>
+
+                        <h1>
+                            Vocabulary
+                        </h1>
+
+                        <p>
+                            Manage English words and translations.
+                        </p>
+
+                    </div>
+
+
+                    <button
+                        class="btn btn-primary"
+                        data-action="add-vocabulary"
+                    >
+                        + Add Word
+                    </button>
+
+                </div>
+
+
+                <div
+                    class="admin-card"
+                    data-vocabulary-table
+                ></div>
+
+            </section>
+
+
+            <!-- =================================================
+                 EXERCISES
+                 ================================================= -->
+
+            <section
+                class="admin-section"
+                id="exercises-section"
+            >
+
+                <div class="page-heading">
+
+                    <div>
+
+                        <h1>
+                            Exercises
+                        </h1>
+
+                        <p>
+                            Manage exercises used inside lessons.
+                        </p>
+
+                    </div>
+
+
+                    <button
+                        class="btn btn-primary"
+                        data-action="add-exercise"
+                    >
+                        + Add Exercise
+                    </button>
+
+                </div>
+
+
+                <div
+                    class="admin-card"
+                    data-exercises-table
+                ></div>
+
+            </section>
+
+
+            <!-- =================================================
+                 TESTS
+                 ================================================= -->
+
+            <section
+                class="admin-section"
+                id="tests-section"
+            >
+
+                <div class="page-heading">
+
+                    <div>
+
+                        <h1>
+                            Tests
+                        </h1>
+
+                        <p>
+                            Manage lesson tests and level assessments.
+                        </p>
+
+                    </div>
+
+
+                    <button
+                        class="btn btn-primary"
+                        data-action="add-test"
+                    >
+                        + Add Test
+                    </button>
+
+                </div>
+
+
+                <div
+                    class="admin-card"
+                    data-tests-table
+                ></div>
+
+            </section>
+
+
+            <!-- =================================================
+                 USERS
+                 ================================================= -->
+
+            <section
+                class="admin-section"
+                id="users-section"
+            >
+
+                <div class="page-heading">
+
+                    <div>
+
+                        <h1>
+                            Users
+                        </h1>
+
+                        <p>
+                            User accounts will be connected later.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    class="admin-card"
+                    data-users-table
+                ></div>
+
+            </section>
+
+
+            <!-- =================================================
+                 SETTINGS
+                 ================================================= -->
+
+            <section
+                class="admin-section"
+                id="settings-section"
+            >
+
+                <div class="page-heading">
+
+                    <div>
+
+                        <h1>
+                            Settings
+                        </h1>
+
+                        <p>
+                            Application configuration.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    data-settings-container
+                ></div>
+
+            </section>
+
+
+        </div>
+
+    </main>
+
+</div>
+
+
+<!-- =========================================================
+     JAVASCRIPT
+     ========================================================= -->
+
+<script src="js/admin.js"></script>
+
+</body>
+</html>
