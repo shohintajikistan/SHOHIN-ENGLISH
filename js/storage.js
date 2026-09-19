@@ -1,29 +1,14 @@
-/*
-==================================================
-SHOHIN ENGLISH
-LOCAL STORAGE SYSTEM
-==================================================
+// ======================================================
+// SHOHIN ENGLISH — LOCAL STORAGE
+// Контент уроков НЕ хранится здесь.
+// ======================================================
 
-Guest mode:
-- No login
-- No registration
-- No Firebase Auth required
-
-All basic progress is saved on the device.
-
-==================================================
-*/
+// SHOHIN BRAND COLORS — НЕ МЕНЯТЬ
 
 const SHOHIN_STORAGE_KEY = "shohinEnglishData";
 
-
-/* ================================================
-   DEFAULT USER DATA
-================================================ */
-
 const DEFAULT_DATA = {
-
-  version: 1,
+  version: 2,
 
   mode: "guest",
 
@@ -31,7 +16,7 @@ const DEFAULT_DATA = {
 
   currentLesson: {
     level: null,
-    lesson: 1
+    lesson: null
   },
 
   completedLessons: [],
@@ -66,13 +51,12 @@ const DEFAULT_DATA = {
     notifications: true,
     language: "en"
   }
-
 };
 
 
-/* ================================================
-   GET DATA
-================================================ */
+// ======================================================
+// GET DATA
+// ======================================================
 
 function getSHOHINData() {
 
@@ -83,15 +67,25 @@ function getSHOHINData() {
 
     if (!saved) {
 
-      saveSHOHINData(DEFAULT_DATA);
+      const fresh =
+        JSON.parse(
+          JSON.stringify(DEFAULT_DATA)
+        );
 
-      return structuredClone(DEFAULT_DATA);
+      localStorage.setItem(
+        SHOHIN_STORAGE_KEY,
+        JSON.stringify(fresh)
+      );
+
+      return fresh;
     }
+
 
     const data = JSON.parse(saved);
 
+
     return {
-      ...structuredClone(DEFAULT_DATA),
+      ...DEFAULT_DATA,
       ...data,
 
       currentLesson: {
@@ -118,408 +112,276 @@ function getSHOHINData() {
         ...DEFAULT_DATA.settings,
         ...(data.settings || {})
       }
-
     };
 
   } catch (error) {
 
     console.error(
-      "SHOHIN storage error:",
+      "SHOHIN Storage error:",
       error
     );
 
-    return structuredClone(DEFAULT_DATA);
+    return JSON.parse(
+      JSON.stringify(DEFAULT_DATA)
+    );
   }
-
 }
 
 
-/* ================================================
-   SAVE DATA
-================================================ */
+// ======================================================
+// SAVE DATA
+// ======================================================
 
 function saveSHOHINData(data) {
 
-  try {
+  localStorage.setItem(
+    SHOHIN_STORAGE_KEY,
+    JSON.stringify(data)
+  );
 
-    localStorage.setItem(
-      SHOHIN_STORAGE_KEY,
-      JSON.stringify(data)
-    );
-
-    return true;
-
-  } catch (error) {
-
-    console.error(
-      "SHOHIN save error:",
-      error
-    );
-
-    return false;
-  }
-
+  return data;
 }
 
 
-/* ================================================
-   UPDATE DATA
-================================================ */
+// ======================================================
+// UPDATE DATA
+// ======================================================
 
 function updateSHOHINData(changes) {
 
-  const current =
+  const data =
     getSHOHINData();
 
   const updated = {
-    ...current,
+    ...data,
     ...changes
   };
 
-  saveSHOHINData(updated);
-
-  return updated;
-
+  return saveSHOHINData(updated);
 }
 
 
-/* ================================================
-   SELECT LEVEL
-================================================ */
+// ======================================================
+// SELECT LEVEL
+// ======================================================
 
 function setSelectedLevel(level) {
 
   const data =
     getSHOHINData();
 
+
   data.selectedLevel = level;
 
-  data.currentLesson = {
-    level: level,
-    lesson: 1
-  };
+
+  // Если уровень выбран впервые,
+  // начинаем с первого урока.
+
+  if (
+    !data.currentLesson.level ||
+    data.currentLesson.level !== level
+  ) {
+
+    data.currentLesson = {
+      level: level,
+      lesson: 1
+    };
+
+  }
+
 
   saveSHOHINData(data);
 
   return data;
-
 }
 
 
-/* ================================================
-   GET SELECTED LEVEL
-================================================ */
+// ======================================================
+// GET SELECTED LEVEL
+// ======================================================
 
 function getSelectedLevel() {
 
-  const data =
-    getSHOHINData();
-
-  return data.selectedLevel;
-
+  return getSHOHINData().selectedLevel;
 }
 
 
-/* ================================================
-   COMPLETE LESSON
-================================================ */
+// ======================================================
+// COMPLETE LESSON
+// ======================================================
 
-function completeLesson(level, lessonNumber) {
+function completeLesson(
+  level,
+  lessonNumber
+) {
 
   const data =
     getSHOHINData();
 
-  const lessonId =
-    `${level}-${lessonNumber}`;
 
-  if (
-    !data.completedLessons.includes(
-      lessonId
-    )
-  ) {
-
-    data.completedLessons.push(
-      lessonId
+  const exists =
+    data.completedLessons.some(
+      item =>
+        item.level === level &&
+        item.lesson === lessonNumber
     );
 
-    data.statistics.lessonsCompleted++;
+
+  if (!exists) {
+
+    data.completedLessons.push({
+      level: level,
+      lesson: lessonNumber,
+      completedAt: new Date().toISOString()
+    });
 
   }
+
+
+  data.statistics.lessonsCompleted =
+    data.completedLessons.length;
+
+
+  // Следующий урок
 
   data.currentLesson = {
     level: level,
     lesson: lessonNumber + 1
   };
 
-  updateStreak(data);
-
-  updateDailyGoal(data);
 
   saveSHOHINData(data);
 
   return data;
-
 }
 
 
-/* ================================================
-   COMPLETE TEST
-================================================ */
+// ======================================================
+// COMPLETE TEST
+// ======================================================
 
-function completeTest(level, score) {
+function completeTest(
+  level,
+  score
+) {
 
   const data =
     getSHOHINData();
 
-  const testId =
-    `${level}-test`;
 
-  const existing =
-    data.completedTests.find(
-      item => item.id === testId
-    );
+  data.completedTests.push({
+    level: level,
+    score: score,
+    completedAt:
+      new Date().toISOString()
+  });
 
-  if (!existing) {
 
-    data.completedTests.push({
-      id: testId,
-      level: level,
-      score: score,
-      date: new Date().toISOString()
-    });
+  data.statistics.testsCompleted =
+    data.completedTests.length;
 
-    data.statistics.testsCompleted++;
-
-  } else {
-
-    existing.score = score;
-    existing.date =
-      new Date().toISOString();
-
-  }
 
   saveSHOHINData(data);
 
   return data;
-
 }
 
 
-/* ================================================
-   ADD LEARNED WORD
-================================================ */
+// ======================================================
+// ADD WORD
+// ======================================================
 
 function addLearnedWord(word) {
 
   const data =
     getSHOHINData();
 
-  const normalized =
-    String(word)
-      .trim()
-      .toLowerCase();
 
-  if (
-    normalized &&
-    !data.learnedWords.includes(
-      normalized
-    )
-  ) {
+  if (!data.learnedWords.includes(word)) {
 
-    data.learnedWords.push(
-      normalized
-    );
-
-    data.statistics.wordsLearned =
-      data.learnedWords.length;
+    data.learnedWords.push(word);
 
   }
+
+
+  data.statistics.wordsLearned =
+    data.learnedWords.length;
+
 
   saveSHOHINData(data);
 
   return data;
-
 }
 
 
-/* ================================================
-   STREAK
-================================================ */
-
-function updateStreak(data) {
-
-  const today =
-    new Date()
-      .toISOString()
-      .split("T")[0];
-
-  const lastDate =
-    data.streak.lastDate;
-
-
-  if (!lastDate) {
-
-    data.streak.current = 1;
-
-  } else if (lastDate !== today) {
-
-    const last =
-      new Date(lastDate);
-
-    const current =
-      new Date(today);
-
-    const difference =
-      Math.floor(
-        (
-          current - last
-        ) /
-        (
-          1000 * 60 * 60 * 24
-        )
-      );
-
-    if (difference === 1) {
-
-      data.streak.current++;
-
-    } else {
-
-      data.streak.current = 1;
-
-    }
-
-  }
-
-
-  if (
-    data.streak.current >
-    data.streak.best
-  ) {
-
-    data.streak.best =
-      data.streak.current;
-
-  }
-
-
-  data.streak.lastDate =
-    today;
-
-}
-
-
-/* ================================================
-   DAILY GOAL
-================================================ */
-
-function updateDailyGoal(data) {
-
-  const today =
-    new Date()
-      .toISOString()
-      .split("T")[0];
-
-
-  if (
-    data.dailyGoal.date !== today
-  ) {
-
-    data.dailyGoal.date =
-      today;
-
-    data.dailyGoal.completed = 0;
-
-  }
-
-
-  if (
-    data.dailyGoal.completed <
-    data.dailyGoal.target
-  ) {
-
-    data.dailyGoal.completed++;
-
-  }
-
-}
-
-
-/* ================================================
-   ADD STUDY MINUTES
-================================================ */
+// ======================================================
+// ADD STUDY MINUTES
+// ======================================================
 
 function addStudyMinutes(minutes) {
 
   const data =
     getSHOHINData();
 
-  const value =
-    Number(minutes) || 0;
 
   data.statistics.totalMinutes +=
-    Math.max(0, value);
+    Number(minutes) || 0;
+
 
   saveSHOHINData(data);
 
   return data;
-
 }
 
 
-/* ================================================
-   ACHIEVEMENTS
-================================================ */
+// ======================================================
+// ACHIEVEMENT
+// ======================================================
 
 function unlockAchievement(id) {
 
   const data =
     getSHOHINData();
 
-  if (
-    !data.achievements.includes(id)
-  ) {
+
+  if (!data.achievements.includes(id)) {
 
     data.achievements.push(id);
 
   }
 
+
   saveSHOHINData(data);
 
   return data;
-
 }
 
 
-/* ================================================
-   RESET PROGRESS
-================================================ */
+// ======================================================
+// RESET
+// ======================================================
 
 function resetSHOHINProgress() {
 
-  const confirmed =
-    confirm(
-      "Reset all SHOHIN ENGLISH progress?"
+  const fresh =
+    JSON.parse(
+      JSON.stringify(DEFAULT_DATA)
     );
 
-  if (!confirmed) {
-    return false;
-  }
 
-  localStorage.removeItem(
-    SHOHIN_STORAGE_KEY
+  localStorage.setItem(
+    SHOHIN_STORAGE_KEY,
+    JSON.stringify(fresh)
   );
 
-  location.reload();
 
-  return true;
-
+  return fresh;
 }
 
 
-/* ================================================
-   EXPORT PROGRESS
-================================================ */
+// ======================================================
+// EXPORT
+// ======================================================
 
 function exportSHOHINProgress() {
 
@@ -531,38 +393,29 @@ function exportSHOHINProgress() {
     null,
     2
   );
-
 }
 
 
-/* ================================================
-   IMPORT PROGRESS
-================================================ */
+// ======================================================
+// IMPORT
+// ======================================================
 
 function importSHOHINProgress(json) {
 
   try {
 
     const data =
-      JSON.parse(json);
+      typeof json === "string"
+        ? JSON.parse(json)
+        : json;
 
-    if (
-      typeof data !== "object" ||
-      data === null
-    ) {
 
-      throw new Error(
-        "Invalid progress data"
-      );
-
+    if (!data || typeof data !== "object") {
+      return false;
     }
 
-    saveSHOHINData({
-      ...structuredClone(DEFAULT_DATA),
-      ...data
-    });
 
-    location.reload();
+    saveSHOHINData(data);
 
     return true;
 
@@ -573,20 +426,14 @@ function importSHOHINProgress(json) {
       error
     );
 
-    alert(
-      "Could not import progress."
-    );
-
     return false;
-
   }
-
 }
 
 
-/* ================================================
-   GLOBAL ACCESS
-================================================ */
+// ======================================================
+// GLOBAL API
+// ======================================================
 
 window.SHOHINStorage = {
 
