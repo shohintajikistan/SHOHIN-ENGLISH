@@ -1,1218 +1,661 @@
-// ============================================================
-// SHOHIN ENGLISH — MAIN APP
-// SHOHIN BRAND COLORS — НЕ МЕНЯТЬ
-// ============================================================
+/*
+==================================================
+SHOHIN ENGLISH
+APP CONTROLLER
+==================================================
 
-import {
-    registerUser,
-    loginUser,
-    logoutUser,
-    watchAuthState,
-    getAuthErrorMessage
-} from "./auth.js";
+Guest-first application.
 
+No mandatory:
+- Login
+- Registration
+- Firebase Auth
 
-// ============================================================
-// APP STATE
-// ============================================================
+Progress:
+- localStorage
+- js/storage.js
 
-const state = {
-    currentPage: "home",
-    user: null,
-    menuOpen: false,
-    progress: 0,
-    completedLessons: 0,
-    streak: 0,
-    currentLevel: "A1"
-};
-
-
-// ============================================================
-// DOM HELPERS
-// ============================================================
-
-const $ = (selector) => document.querySelector(selector);
-
-const $$ = (selector) => document.querySelectorAll(selector);
-
-
-// ============================================================
-// INIT
-// ============================================================
+==================================================
+*/
 
 document.addEventListener("DOMContentLoaded", () => {
-    initApp();
-});
+
+  /* ==================================================
+     ELEMENTS
+  ================================================== */
+
+  const splash =
+    document.getElementById("splash");
+
+  const app =
+    document.getElementById("app");
+
+  const menu =
+    document.getElementById("menu");
+
+  const openMenu =
+    document.getElementById("openMenu");
+
+  const closeMenu =
+    document.getElementById("closeMenu");
+
+  const progressPercent =
+    document.getElementById("progressPercent");
+
+  const progressFill =
+    document.getElementById("progressFill");
 
 
-// ============================================================
-// INITIALIZE APP
-// ============================================================
+  /* ==================================================
+     START APP
+  ================================================== */
 
-function initApp() {
+  startApplication();
 
-    setupSplash();
-    setupNavigation();
+
+  function startApplication() {
+
+    initializeStorage();
+
+    loadUserProgress();
+
     setupMenu();
-    setupAuthForms();
-    setupAuthState();
-    setupHomeActions();
-    setupSettings();
-    setupVocabulary();
-    setupLogout();
 
-    loadLocalProgress();
+    setupLevels();
 
-    renderCourses();
-    renderVocabulary();
-    renderTests();
-    renderAchievements();
+    setupDailyButton();
 
-}
+    setupNavigation();
+
+    hideSplash();
+
+  }
 
 
-// ============================================================
-// SPLASH
-// ============================================================
+  /* ==================================================
+     STORAGE
+  ================================================== */
 
-function setupSplash() {
+  function initializeStorage() {
 
-    const splash = $("#splashScreen");
+    if (
+      typeof window.SHOHINStorage ===
+      "undefined"
+    ) {
 
-    if (!splash) return;
+      console.warn(
+        "SHOHINStorage is not loaded."
+      );
+
+      return;
+
+    }
+
+    SHOHINStorage.get();
+
+  }
+
+
+  /* ==================================================
+     SPLASH
+  ================================================== */
+
+  function hideSplash() {
 
     setTimeout(() => {
 
-        splash.classList.add("hidden");
+      if (splash) {
 
-        setTimeout(() => {
-            splash.style.display = "none";
-        }, 400);
+        splash.classList.add("hide");
 
-    }, 1600);
+      }
 
-}
+      if (app) {
+
+        app.style.display = "block";
+
+      }
+
+    }, 1000);
+
+  }
 
 
-// ============================================================
-// FIREBASE AUTH STATE
-// ============================================================
+  /* ==================================================
+     LOAD USER PROGRESS
+  ================================================== */
 
-function setupAuthState() {
+  function loadUserProgress() {
 
-    watchAuthState((user) => {
+    if (
+      typeof window.SHOHINStorage ===
+      "undefined"
+    ) {
 
-        state.user = user;
+      return;
 
-        if (user) {
+    }
 
-            showApp();
-            updateUserInterface();
 
-        } else {
+    const data =
+      SHOHINStorage.get();
 
-            showAuth();
+
+    const completedLessons =
+      data.completedLessons.length;
+
+
+    /*
+      Current planned course:
+
+      A1 = 20
+      A2 = 25
+      B1 = 30
+      B2 = 30
+      C1 = 35
+      C2 = 40
+
+      Total = 180 lessons
+    */
+
+    const totalLessons = 180;
+
+
+    const percent =
+      Math.min(
+        100,
+        Math.round(
+          (
+            completedLessons /
+            totalLessons
+          ) * 100
+        )
+      );
+
+
+    if (progressPercent) {
+
+      progressPercent.textContent =
+        percent + "%";
+
+    }
+
+
+    if (progressFill) {
+
+      progressFill.style.width =
+        percent + "%";
+
+    }
+
+  }
+
+
+  /* ==================================================
+     MENU
+  ================================================== */
+
+  function setupMenu() {
+
+    if (
+      !menu ||
+      !openMenu ||
+      !closeMenu
+    ) {
+
+      return;
+
+    }
+
+
+    openMenu.addEventListener(
+      "click",
+      () => {
+
+        menu.classList.add("show");
+
+      }
+    );
+
+
+    closeMenu.addEventListener(
+      "click",
+      () => {
+
+        menu.classList.remove("show");
+
+      }
+    );
+
+
+    menu.addEventListener(
+      "click",
+      (event) => {
+
+        if (
+          event.target === menu
+        ) {
+
+          menu.classList.remove(
+            "show"
+          );
 
         }
 
-    });
+      }
+    );
 
-}
+  }
 
 
-// ============================================================
-// SHOW AUTH
-// ============================================================
+  /* ==================================================
+     LEVELS
+  ================================================== */
 
-function showAuth() {
+  function setupLevels() {
 
-    const authScreen = $("#authScreen");
-    const appScreen = $("#appScreen");
+    const levelButtons =
+      document.querySelectorAll(
+        ".level"
+      );
 
-    if (authScreen) {
-        authScreen.classList.remove("hidden");
-    }
 
-    if (appScreen) {
-        appScreen.classList.add("hidden");
-    }
+    levelButtons.forEach(
+      (button) => {
 
-}
+        button.addEventListener(
+          "click",
+          () => {
 
+            const level =
+              button.dataset.level;
 
-// ============================================================
-// SHOW APP
-// ============================================================
 
-function showApp() {
+            selectLevel(level);
 
-    const authScreen = $("#authScreen");
-    const appScreen = $("#appScreen");
-
-    if (authScreen) {
-        authScreen.classList.add("hidden");
-    }
-
-    if (appScreen) {
-        appScreen.classList.remove("hidden");
-    }
-
-    showPage("home");
-
-}
-
-
-// ============================================================
-// AUTH FORMS
-// ============================================================
-
-function setupAuthForms() {
-
-    const loginForm = $("#loginForm");
-    const registerForm = $("#registerForm");
-
-
-    // ========================================================
-    // LOGIN
-    // ========================================================
-
-    if (loginForm) {
-
-        loginForm.addEventListener("submit", async (event) => {
-
-            event.preventDefault();
-
-            const email = $("#loginEmail")?.value.trim();
-            const password = $("#loginPassword")?.value;
-
-            setLoading(true);
-
-            try {
-
-                await loginUser(email, password);
-
-                showToast("Добро пожаловать!");
-
-                loginForm.reset();
-
-            } catch (error) {
-
-                console.error(
-                    "🔥 FIREBASE LOGIN ERROR:",
-                    error
-                );
-
-                showToast(
-                    `Ошибка: ${error.code || "unknown"}`
-                );
-
-            } finally {
-
-                setLoading(false);
-
-            }
-
-        });
-
-    }
-
-
-    // ========================================================
-    // REGISTER
-    // ========================================================
-
-    if (registerForm) {
-
-        registerForm.addEventListener("submit", async (event) => {
-
-            event.preventDefault();
-
-            const name = $("#registerName")?.value.trim();
-            const email = $("#registerEmail")?.value.trim();
-            const password = $("#registerPassword")?.value;
-
-            setLoading(true);
-
-            try {
-
-                await registerUser(
-                    name,
-                    email,
-                    password
-                );
-
-                showToast(
-                    "Аккаунт успешно создан!"
-                );
-
-                registerForm.reset();
-
-            } catch (error) {
-
-                console.error(
-                    "🔥 FIREBASE REGISTRATION ERROR:",
-                    error
-                );
-
-                showToast(
-                    `Ошибка: ${error.code || "unknown"}`
-                );
-
-            } finally {
-
-                setLoading(false);
-
-            }
-
-        });
-
-    }
-
-
-    // ========================================================
-    // LOGIN / REGISTER SWITCH
-    // ========================================================
-
-    $$("[data-auth]").forEach((button) => {
-
-        button.addEventListener("click", () => {
-
-            const target = button.dataset.auth;
-
-            switchAuthForm(target);
-
-        });
-
-    });
-
-}
-
-
-// ============================================================
-// SWITCH AUTH FORM
-// ============================================================
-
-function switchAuthForm(type) {
-
-    const loginBox = $("#loginBox");
-    const registerBox = $("#registerBox");
-
-    if (!loginBox || !registerBox) return;
-
-    if (type === "register") {
-
-        loginBox.classList.add("hidden");
-        registerBox.classList.remove("hidden");
-
-    } else {
-
-        registerBox.classList.add("hidden");
-        loginBox.classList.remove("hidden");
-
-    }
-
-}
-
-
-// ============================================================
-// NAVIGATION
-// ============================================================
-
-function setupNavigation() {
-
-    $$("[data-page]").forEach((button) => {
-
-        button.addEventListener("click", () => {
-
-            const page = button.dataset.page;
-
-            showPage(page);
-
-            closeMenu();
-
-        });
-
-    });
-
-}
-
-
-// ============================================================
-// SHOW PAGE
-// ============================================================
-
-function showPage(pageName) {
-
-    const pages = $$(".page");
-
-    pages.forEach((page) => {
-        page.classList.remove("active");
-    });
-
-
-    const selectedPage = $(`#${pageName}Page`);
-
-    if (selectedPage) {
-        selectedPage.classList.add("active");
-    }
-
-
-    state.currentPage = pageName;
-
-
-    $$("[data-page]").forEach((button) => {
-
-        button.classList.toggle(
-            "active",
-            button.dataset.page === pageName
+          }
         );
 
-    });
+      }
+    );
+
+  }
 
 
-    window.scrollTo({
-        top: 0,
-        behavior: "smooth"
-    });
+  function selectLevel(level) {
 
-}
+    if (
+      typeof window.SHOHINStorage !==
+      "undefined"
+    ) {
 
+      SHOHINStorage.setLevel(
+        level
+      );
 
-// ============================================================
-// SIDE MENU
-// ============================================================
-
-function setupMenu() {
-
-    const menuButton = $("#menuButton");
-    const closeButton = $("#closeMenu");
-    const overlay = $("#menuOverlay");
-
-    if (menuButton) {
-        menuButton.addEventListener("click", openMenu);
     }
 
-    if (closeButton) {
-        closeButton.addEventListener("click", closeMenu);
+
+    /*
+      Temporary message.
+
+      Later this will open:
+      Levels → Lessons → Lesson 1
+    */
+
+    showMessage(
+      `${level} selected.`
+    );
+
+
+    loadUserProgress();
+
+  }
+
+
+  /* ==================================================
+     DAILY BUTTON
+  ================================================== */
+
+  function setupDailyButton() {
+
+    const button =
+      document.getElementById(
+        "startLearning"
+      );
+
+
+    if (!button) {
+
+      return;
+
     }
 
-    if (overlay) {
-        overlay.addEventListener("click", closeMenu);
-    }
 
-}
+    button.addEventListener(
+      "click",
+      () => {
 
-
-// ============================================================
-// OPEN MENU
-// ============================================================
-
-function openMenu() {
-
-    const menu = $("#sideMenu");
-    const overlay = $("#menuOverlay");
-
-    if (menu) {
-        menu.classList.add("open");
-    }
-
-    if (overlay) {
-        overlay.classList.add("active");
-    }
-
-    state.menuOpen = true;
-
-}
+        const level =
+          getSelectedLevel();
 
 
-// ============================================================
-// CLOSE MENU
-// ============================================================
+        if (!level) {
 
-function closeMenu() {
+          showMessage(
+            "Choose your English level first."
+          );
 
-    const menu = $("#sideMenu");
-    const overlay = $("#menuOverlay");
+          return;
 
-    if (menu) {
-        menu.classList.remove("open");
-    }
-
-    if (overlay) {
-        overlay.classList.remove("active");
-    }
-
-    state.menuOpen = false;
-
-}
-
-
-// ============================================================
-// HOME ACTIONS
-// ============================================================
-
-function setupHomeActions() {
-
-    $$("[data-action='start-learning']").forEach((button) => {
-
-        button.addEventListener("click", () => {
-            showPage("courses");
-        });
-
-    });
-
-
-    $$("[data-action='continue-learning']").forEach((button) => {
-
-        button.addEventListener("click", () => {
-            showPage("courses");
-        });
-
-    });
-
-}
-
-
-// ============================================================
-// LOGOUT
-// ============================================================
-
-function setupLogout() {
-
-    $$("[data-action='logout']").forEach((button) => {
-
-        button.addEventListener("click", async () => {
-
-            setLoading(true);
-
-            try {
-
-                await logoutUser();
-
-                closeMenu();
-
-                showToast(
-                    "Вы вышли из аккаунта."
-                );
-
-            } catch (error) {
-
-                console.error(
-                    "Logout error:",
-                    error
-                );
-
-                showToast(
-                    "Не удалось выйти."
-                );
-
-            } finally {
-
-                setLoading(false);
-
-            }
-
-        });
-
-    });
-
-}
-
-
-// ============================================================
-// COURSES
-// ============================================================
-
-function renderCourses() {
-
-    const container = $("#coursesList");
-
-    if (!container) return;
-
-
-    const levels = [
-        {
-            id: "A1",
-            name: "Beginner",
-            lessons: 20,
-            description: "Основы английского языка"
-        },
-        {
-            id: "A2",
-            name: "Elementary",
-            lessons: 25,
-            description: "Повседневный английский"
-        },
-        {
-            id: "B1",
-            name: "Intermediate",
-            lessons: 30,
-            description: "Уверенное общение"
-        },
-        {
-            id: "B2",
-            name: "Upper-Intermediate",
-            lessons: 30,
-            description: "Продвинутый разговорный английский"
-        },
-        {
-            id: "C1",
-            name: "Advanced",
-            lessons: 35,
-            description: "Сложный английский"
-        },
-        {
-            id: "C2",
-            name: "Proficiency",
-            lessons: 40,
-            description: "Высший уровень"
         }
-    ];
 
 
-    container.innerHTML = levels.map((level, index) => {
+        openLessons(level);
 
-        const unlocked = index === 0;
+      }
+    );
 
-        return `
-            <div class="level-card ${unlocked ? "" : "locked"}"
-                 data-level="${level.id}">
-
-                <div class="level-badge">
-                    ${level.id}
-                </div>
-
-                <div class="level-content">
-
-                    <h3>${level.name}</h3>
-
-                    <p>${level.description}</p>
-
-                    <div class="level-progress">
-
-                        <span>
-                            ${level.lessons} уроков
-                        </span>
-
-                        <span>
-                            ${unlocked ? "Доступен" : "Закрыт"}
-                        </span>
-
-                    </div>
-
-                </div>
-
-                <div class="lock-icon">
-
-                    <i class="fa-solid ${
-                        unlocked
-                            ? "fa-chevron-right"
-                            : "fa-lock"
-                    }"></i>
-
-                </div>
-
-            </div>
-        `;
-
-    }).join("");
+  }
 
 
-    $$(".level-card").forEach((card) => {
+  /* ==================================================
+     GET LEVEL
+  ================================================== */
 
-        card.addEventListener("click", () => {
+  function getSelectedLevel() {
 
-            const level = card.dataset.level;
+    if (
+      typeof window.SHOHINStorage ===
+      "undefined"
+    ) {
 
-            if (level !== "A1") {
+      return null;
 
-                showToast(
-                    "Сначала завершите предыдущий уровень."
-                );
+    }
 
-                return;
 
-            }
+    return SHOHINStorage.getLevel();
 
-            showToast(
-                "Уроки A1 скоро будут доступны."
+  }
+
+
+  /* ==================================================
+     OPEN LESSONS
+  ================================================== */
+
+  function openLessons(level) {
+
+    /*
+      Temporary.
+
+      Next development step:
+      create the real Lessons screen.
+    */
+
+    showMessage(
+      `Opening ${level} lessons...`
+    );
+
+  }
+
+
+  /* ==================================================
+     NAVIGATION
+  ================================================== */
+
+  function setupNavigation() {
+
+    const homeNav =
+      document.getElementById(
+        "homeNav"
+      );
+
+    const lessonsNav =
+      document.getElementById(
+        "lessonsNav"
+      );
+
+    const progressNav =
+      document.getElementById(
+        "progressNav"
+      );
+
+    const profileNav =
+      document.getElementById(
+        "profileNav"
+      );
+
+
+    if (homeNav) {
+
+      homeNav.addEventListener(
+        "click",
+        () => {
+
+          setActiveNavigation(
+            homeNav
+          );
+
+          window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+          });
+
+        }
+      );
+
+    }
+
+
+    if (lessonsNav) {
+
+      lessonsNav.addEventListener(
+        "click",
+        () => {
+
+          setActiveNavigation(
+            lessonsNav
+          );
+
+          const level =
+            getSelectedLevel();
+
+
+          if (!level) {
+
+            showMessage(
+              "Choose a level first."
             );
 
-        });
+            return;
 
-    });
-
-}
+          }
 
 
-// ============================================================
-// VOCABULARY SEARCH
-// ============================================================
+          openLessons(level);
 
-function setupVocabulary() {
-
-    const search = $("#vocabularySearch");
-
-    if (!search) return;
-
-    search.addEventListener("input", () => {
-
-        const query = search.value
-            .trim()
-            .toLowerCase();
-
-        $$(".vocabulary-card").forEach((card) => {
-
-            const text =
-                card.textContent.toLowerCase();
-
-            card.style.display =
-                !query || text.includes(query)
-                    ? ""
-                    : "none";
-
-        });
-
-    });
-
-}
-
-
-// ============================================================
-// VOCABULARY
-// ============================================================
-
-function renderVocabulary() {
-
-    const container = $("#vocabularyList");
-
-    if (!container) return;
-
-
-    const words = [
-        {
-            word: "Hello",
-            translation: "Привет",
-            example: "Hello! How are you?"
-        },
-        {
-            word: "Book",
-            translation: "Книга",
-            example: "This is my book."
-        },
-        {
-            word: "Water",
-            translation: "Вода",
-            example: "I drink water."
-        },
-        {
-            word: "Friend",
-            translation: "Друг",
-            example: "He is my friend."
-        },
-        {
-            word: "Learn",
-            translation: "Учить",
-            example: "I learn English."
-        },
-        {
-            word: "Future",
-            translation: "Будущее",
-            example: "Build your future."
         }
-    ];
+      );
+
+    }
 
 
-    container.innerHTML = words.map((item) => {
+    if (progressNav) {
 
-        return `
-            <div class="vocabulary-card">
+      progressNav.addEventListener(
+        "click",
+        () => {
 
-                <div class="vocabulary-icon">
-                    <i class="fa-solid fa-language"></i>
-                </div>
+          setActiveNavigation(
+            progressNav
+          );
 
-                <div class="vocabulary-content">
+          showProgress();
 
-                    <h3>${escapeHTML(item.word)}</h3>
-
-                    <strong>
-                        ${escapeHTML(item.translation)}
-                    </strong>
-
-                    <p>
-                        ${escapeHTML(item.example)}
-                    </p>
-
-                </div>
-
-            </div>
-        `;
-
-    }).join("");
-
-}
-
-
-// ============================================================
-// TESTS
-// ============================================================
-
-function renderTests() {
-
-    const container = $("#testsList");
-
-    if (!container) return;
-
-
-    const tests = [
-        {
-            title: "A1 Vocabulary Test",
-            description: "Проверьте базовые слова",
-            questions: 10
-        },
-        {
-            title: "A1 Grammar Test",
-            description: "Основная грамматика",
-            questions: 10
-        },
-        {
-            title: "A1 Final Assessment",
-            description: "Итоговая проверка уровня A1",
-            questions: 20
         }
-    ];
+      );
+
+    }
 
 
-    container.innerHTML = tests.map((test) => {
+    if (profileNav) {
 
-        return `
-            <div class="test-card">
+      profileNav.addEventListener(
+        "click",
+        () => {
 
-                <div class="test-icon">
-                    <i class="fa-solid fa-clipboard-check"></i>
-                </div>
+          setActiveNavigation(
+            profileNav
+          );
 
-                <div class="test-content">
+          showProfile();
 
-                    <h3>
-                        ${escapeHTML(test.title)}
-                    </h3>
-
-                    <p>
-                        ${escapeHTML(test.description)}
-                    </p>
-
-                    <span>
-                        ${test.questions} вопросов
-                    </span>
-
-                </div>
-
-                <button
-                    class="btn btn-small"
-                    type="button"
-                    onclick="window.startTest()">
-
-                    Начать
-
-                </button>
-
-            </div>
-        `;
-
-    }).join("");
-
-}
-
-
-// ============================================================
-// TEST START
-// ============================================================
-
-window.startTest = function () {
-
-    showToast(
-        "Тест скоро будет доступен."
-    );
-
-};
-
-
-// ============================================================
-// ACHIEVEMENTS
-// ============================================================
-
-function renderAchievements() {
-
-    const container = $("#achievementsList");
-
-    if (!container) return;
-
-
-    const achievements = [
-        {
-            icon: "fa-flag",
-            title: "First Step",
-            description: "Начните изучение английского"
-        },
-        {
-            icon: "fa-book-open",
-            title: "First Lesson",
-            description: "Завершите первый урок"
-        },
-        {
-            icon: "fa-fire",
-            title: "7 Day Streak",
-            description: "Учитесь 7 дней подряд"
-        },
-        {
-            icon: "fa-trophy",
-            title: "A1 Complete",
-            description: "Завершите уровень A1"
         }
-    ];
-
-
-    container.innerHTML = achievements.map((item) => {
-
-        return `
-            <div class="achievement-card">
-
-                <div class="achievement-icon">
-
-                    <i class="fa-solid ${item.icon}"></i>
-
-                </div>
-
-                <div>
-
-                    <h3>
-                        ${escapeHTML(item.title)}
-                    </h3>
-
-                    <p>
-                        ${escapeHTML(item.description)}
-                    </p>
-
-                </div>
-
-            </div>
-        `;
-
-    }).join("");
-
-}
-
-
-// ============================================================
-// PROFILE
-// ============================================================
-
-function updateUserInterface() {
-
-    if (!state.user) return;
-
-
-    const name =
-        state.user.displayName ||
-        "Student";
-
-    const email =
-        state.user.email ||
-        "";
-
-
-    setText("#profileName", name);
-    setText("#profileEmail", email);
-    setText(
-        "#profileLessons",
-        state.completedLessons
-    );
-    setText(
-        "#profileStreak",
-        state.streak
-    );
-    setText(
-        "#profileLevel",
-        state.currentLevel
-    );
-
-
-    updateProgressUI();
-
-}
-
-
-// ============================================================
-// PROGRESS UI
-// ============================================================
-
-function updateProgressUI() {
-
-    setText(
-        "#progressPercent",
-        `${state.progress}%`
-    );
-
-    setText(
-        "#completedLessons",
-        state.completedLessons
-    );
-
-    setText(
-        "#streakDays",
-        state.streak
-    );
-
-
-    const progressBar = $("#progressBar");
-
-    if (progressBar) {
-
-        progressBar.style.width =
-            `${state.progress}%`;
+      );
 
     }
 
-}
+  }
 
 
-// ============================================================
-// SETTINGS
-// ============================================================
+  /* ==================================================
+     ACTIVE NAVIGATION
+  ================================================== */
 
-function setupSettings() {
+  function setActiveNavigation(
+    activeButton
+  ) {
 
-    const notifications =
-        $("#notificationsToggle");
+    document
+      .querySelectorAll(
+        ".nav-btn"
+      )
+      .forEach(
+        button => {
 
-    const sound =
-        $("#soundToggle");
+          button.classList.remove(
+            "active"
+          );
 
-
-    if (notifications) {
-
-        notifications.addEventListener(
-            "change",
-            () => {
-
-                localStorage.setItem(
-                    "shohin_notifications",
-                    notifications.checked
-                );
-
-            }
-        );
-
-        notifications.checked =
-            localStorage.getItem(
-                "shohin_notifications"
-            ) !== "false";
-
-    }
-
-
-    if (sound) {
-
-        sound.addEventListener(
-            "change",
-            () => {
-
-                localStorage.setItem(
-                    "shohin_sound",
-                    sound.checked
-                );
-
-            }
-        );
-
-        sound.checked =
-            localStorage.getItem(
-                "shohin_sound"
-            ) !== "false";
-
-    }
-
-}
-
-
-// ============================================================
-// LOCAL PROGRESS
-// ============================================================
-
-function loadLocalProgress() {
-
-    const saved =
-        localStorage.getItem(
-            "shohin_english_progress"
-        );
-
-
-    if (!saved) return;
-
-
-    try {
-
-        const data = JSON.parse(saved);
-
-        state.progress =
-            Number(data.progress) || 0;
-
-        state.completedLessons =
-            Number(data.completedLessons) || 0;
-
-        state.streak =
-            Number(data.streak) || 0;
-
-        state.currentLevel =
-            data.currentLevel || "A1";
-
-    } catch (error) {
-
-        console.warn(
-            "Progress data could not be loaded.",
-            error
-        );
-
-    }
-
-}
-
-
-// ============================================================
-// SAVE LOCAL PROGRESS
-// ============================================================
-
-function saveLocalProgress() {
-
-    localStorage.setItem(
-        "shohin_english_progress",
-        JSON.stringify({
-            progress: state.progress,
-            completedLessons:
-                state.completedLessons,
-            streak: state.streak,
-            currentLevel:
-                state.currentLevel
-        })
-    );
-
-}
-
-
-// ============================================================
-// TEXT HELPER
-// ============================================================
-
-function setText(selector, value) {
-
-    const element = $(selector);
-
-    if (element) {
-        element.textContent = value;
-    }
-
-}
-
-
-// ============================================================
-// LOADING
-// ============================================================
-
-function setLoading(show) {
-
-    const loading = $("#globalLoading");
-
-    if (!loading) return;
-
-    if (show) {
-        loading.classList.add("active");
-    } else {
-        loading.classList.remove("active");
-    }
-
-}
-
-
-// ============================================================
-// TOAST
-// ============================================================
-
-function showToast(message) {
-
-    const toast = $("#toast");
-
-    if (!toast) return;
-
-    toast.textContent = message;
-
-    toast.classList.add("show");
-
-
-    clearTimeout(
-        window.__shohinToastTimer
-    );
-
-
-    window.__shohinToastTimer =
-        setTimeout(() => {
-
-            toast.classList.remove("show");
-
-        }, 5000);
-
-}
-
-
-// ============================================================
-// ESCAPE HTML
-// ============================================================
-
-function escapeHTML(value) {
-
-    return String(value)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-
-}
-
-
-// ============================================================
-// ESC KEY
-// ============================================================
-
-document.addEventListener(
-    "keydown",
-    (event) => {
-
-        if (event.key === "Escape") {
-            closeMenu();
         }
+      );
+
+
+    if (activeButton) {
+
+      activeButton.classList.add(
+        "active"
+      );
 
     }
-);
+
+  }
 
 
-// ============================================================
-// AUTO SAVE
-// ============================================================
+  /* ==================================================
+     PROGRESS SCREEN
+  ================================================== */
 
-window.addEventListener(
-    "beforeunload",
-    () => {
-        saveLocalProgress();
+  function showProgress() {
+
+    if (
+      typeof window.SHOHINStorage ===
+      "undefined"
+    ) {
+
+      return;
+
     }
-);
 
 
-// ============================================================
-// READY
-// ============================================================
+    const data =
+      SHOHINStorage.get();
 
-console.log(
-    "🚀 SHOHIN ENGLISH app loaded"
-);
+
+    const lessons =
+      data.statistics.lessonsCompleted;
+
+
+    const words =
+      data.statistics.wordsLearned;
+
+
+    const tests =
+      data.statistics.testsCompleted;
+
+
+    const streak =
+      data.streak.current;
+
+
+    showMessage(
+      `Progress
+
+Lessons: ${lessons}
+Words: ${words}
+Tests: ${tests}
+Streak: ${streak} days`
+    );
+
+  }
+
+
+  /* ==================================================
+     PROFILE
+  ================================================== */
+
+  function showProfile() {
+
+    const data =
+      SHOHINStorage
+        ? SHOHINStorage.get()
+        : null;
+
+
+    if (!data) {
+
+      return;
+
+    }
+
+
+    const level =
+      data.selectedLevel ||
+      "Not selected";
+
+
+    showMessage(
+      `Guest Profile
+
+Level: ${level}
+
+Your progress is saved
+on this device.`
+    );
+
+  }
+
+
+  /* ==================================================
+     MESSAGE
+  ================================================== */
+
+  function showMessage(
+    message
+  ) {
+
+    /*
+      For now we use a simple
+      browser dialog.
+
+      Later we will replace this
+      with a professional SHOHIN
+      notification/toast system.
+    */
+
+    alert(message);
+
+  }
+
+});
