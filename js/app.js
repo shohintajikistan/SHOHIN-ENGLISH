@@ -41,9 +41,7 @@ const $$ = (selector) => document.querySelectorAll(selector);
 // ============================================================
 
 document.addEventListener("DOMContentLoaded", () => {
-
     initApp();
-
 });
 
 
@@ -109,7 +107,6 @@ function setupAuthState() {
         if (user) {
 
             showApp();
-
             updateUserInterface();
 
         } else {
@@ -174,6 +171,11 @@ function setupAuthForms() {
     const loginForm = $("#loginForm");
     const registerForm = $("#registerForm");
 
+
+    // ========================================================
+    // LOGIN
+    // ========================================================
+
     if (loginForm) {
 
         loginForm.addEventListener("submit", async (event) => {
@@ -195,9 +197,13 @@ function setupAuthForms() {
 
             } catch (error) {
 
+                console.error(
+                    "🔥 FIREBASE LOGIN ERROR:",
+                    error
+                );
+
                 showToast(
-                    getAuthErrorMessage(error.code) ||
-                    error.message
+                    `Ошибка: ${error.code || "unknown"}`
                 );
 
             } finally {
@@ -210,6 +216,10 @@ function setupAuthForms() {
 
     }
 
+
+    // ========================================================
+    // REGISTER
+    // ========================================================
 
     if (registerForm) {
 
@@ -231,15 +241,21 @@ function setupAuthForms() {
                     password
                 );
 
-                showToast("Аккаунт успешно создан!");
+                showToast(
+                    "Аккаунт успешно создан!"
+                );
 
                 registerForm.reset();
 
             } catch (error) {
 
+                console.error(
+                    "🔥 FIREBASE REGISTRATION ERROR:",
+                    error
+                );
+
                 showToast(
-                    getAuthErrorMessage(error.code) ||
-                    error.message
+                    `Ошибка: ${error.code || "unknown"}`
                 );
 
             } finally {
@@ -253,7 +269,9 @@ function setupAuthForms() {
     }
 
 
-    // Login / Register switch
+    // ========================================================
+    // LOGIN / REGISTER SWITCH
+    // ========================================================
 
     $$("[data-auth]").forEach((button) => {
 
@@ -328,25 +346,19 @@ function showPage(pageName) {
     const pages = $$(".page");
 
     pages.forEach((page) => {
-
         page.classList.remove("active");
-
     });
 
 
     const selectedPage = $(`#${pageName}Page`);
 
     if (selectedPage) {
-
         selectedPage.classList.add("active");
-
     }
 
 
     state.currentPage = pageName;
 
-
-    // Update navigation buttons
 
     $$("[data-page]").forEach((button) => {
 
@@ -377,21 +389,15 @@ function setupMenu() {
     const overlay = $("#menuOverlay");
 
     if (menuButton) {
-
         menuButton.addEventListener("click", openMenu);
-
     }
 
     if (closeButton) {
-
         closeButton.addEventListener("click", closeMenu);
-
     }
 
     if (overlay) {
-
         overlay.addEventListener("click", closeMenu);
-
     }
 
 }
@@ -450,9 +456,7 @@ function setupHomeActions() {
     $$("[data-action='start-learning']").forEach((button) => {
 
         button.addEventListener("click", () => {
-
             showPage("courses");
-
         });
 
     });
@@ -461,9 +465,7 @@ function setupHomeActions() {
     $$("[data-action='continue-learning']").forEach((button) => {
 
         button.addEventListener("click", () => {
-
             showPage("courses");
-
         });
 
     });
@@ -489,11 +491,20 @@ function setupLogout() {
 
                 closeMenu();
 
-                showToast("Вы вышли из аккаунта.");
+                showToast(
+                    "Вы вышли из аккаунта."
+                );
 
             } catch (error) {
 
-                showToast("Не удалось выйти.");
+                console.error(
+                    "Logout error:",
+                    error
+                );
+
+                showToast(
+                    "Не удалось выйти."
+                );
 
             } finally {
 
@@ -623,7 +634,9 @@ function renderCourses() {
 
             }
 
-            showToast("Уроки A1 скоро будут доступны.");
+            showToast(
+                "Уроки A1 скоро будут доступны."
+            );
 
         });
 
@@ -633,7 +646,7 @@ function renderCourses() {
 
 
 // ============================================================
-// VOCABULARY
+// VOCABULARY SEARCH
 // ============================================================
 
 function setupVocabulary() {
@@ -666,7 +679,7 @@ function setupVocabulary() {
 
 
 // ============================================================
-// VOCABULARY DATA
+// VOCABULARY
 // ============================================================
 
 function renderVocabulary() {
@@ -819,7 +832,9 @@ function renderTests() {
 
 window.startTest = function () {
 
-    showToast("Тест скоро будет доступен.");
+    showToast(
+        "Тест скоро будет доступен."
+    );
 
 };
 
@@ -910,9 +925,18 @@ function updateUserInterface() {
 
     setText("#profileName", name);
     setText("#profileEmail", email);
-    setText("#profileLessons", state.completedLessons);
-    setText("#profileStreak", state.streak);
-    setText("#profileLevel", state.currentLevel);
+    setText(
+        "#profileLessons",
+        state.completedLessons
+    );
+    setText(
+        "#profileStreak",
+        state.streak
+    );
+    setText(
+        "#profileLevel",
+        state.currentLevel
+    );
 
 
     updateProgressUI();
@@ -960,20 +984,26 @@ function updateProgressUI() {
 
 function setupSettings() {
 
-    const notifications = $("#notificationsToggle");
-    const sound = $("#soundToggle");
+    const notifications =
+        $("#notificationsToggle");
+
+    const sound =
+        $("#soundToggle");
 
 
     if (notifications) {
 
-        notifications.addEventListener("change", () => {
+        notifications.addEventListener(
+            "change",
+            () => {
 
-            localStorage.setItem(
-                "shohin_notifications",
-                notifications.checked
-            );
+                localStorage.setItem(
+                    "shohin_notifications",
+                    notifications.checked
+                );
 
-        });
+            }
+        );
 
         notifications.checked =
             localStorage.getItem(
@@ -985,14 +1015,17 @@ function setupSettings() {
 
     if (sound) {
 
-        sound.addEventListener("change", () => {
+        sound.addEventListener(
+            "change",
+            () => {
 
-            localStorage.setItem(
-                "shohin_sound",
-                sound.checked
-            );
+                localStorage.setItem(
+                    "shohin_sound",
+                    sound.checked
+                );
 
-        });
+            }
+        );
 
         sound.checked =
             localStorage.getItem(
@@ -1035,11 +1068,11 @@ function loadLocalProgress() {
         state.currentLevel =
             data.currentLevel || "A1";
 
-
     } catch (error) {
 
         console.warn(
-            "Progress data could not be loaded."
+            "Progress data could not be loaded.",
+            error
         );
 
     }
@@ -1057,9 +1090,11 @@ function saveLocalProgress() {
         "shohin_english_progress",
         JSON.stringify({
             progress: state.progress,
-            completedLessons: state.completedLessons,
+            completedLessons:
+                state.completedLessons,
             streak: state.streak,
-            currentLevel: state.currentLevel
+            currentLevel:
+                state.currentLevel
         })
     );
 
@@ -1075,9 +1110,7 @@ function setText(selector, value) {
     const element = $(selector);
 
     if (element) {
-
         element.textContent = value;
-
     }
 
 }
@@ -1094,13 +1127,9 @@ function setLoading(show) {
     if (!loading) return;
 
     if (show) {
-
         loading.classList.add("active");
-
     } else {
-
         loading.classList.remove("active");
-
     }
 
 }
@@ -1116,13 +1145,14 @@ function showToast(message) {
 
     if (!toast) return;
 
-
     toast.textContent = message;
 
     toast.classList.add("show");
 
 
-    clearTimeout(window.__shohinToastTimer);
+    clearTimeout(
+        window.__shohinToastTimer
+    );
 
 
     window.__shohinToastTimer =
@@ -1130,7 +1160,7 @@ function showToast(message) {
 
             toast.classList.remove("show");
 
-        }, 3000);
+        }, 5000);
 
 }
 
@@ -1155,30 +1185,34 @@ function escapeHTML(value) {
 // ESC KEY
 // ============================================================
 
-document.addEventListener("keydown", (event) => {
+document.addEventListener(
+    "keydown",
+    (event) => {
 
-    if (event.key === "Escape") {
-
-        closeMenu();
+        if (event.key === "Escape") {
+            closeMenu();
+        }
 
     }
-
-});
+);
 
 
 // ============================================================
 // AUTO SAVE
 // ============================================================
 
-window.addEventListener("beforeunload", () => {
-
-    saveLocalProgress();
-
-});
+window.addEventListener(
+    "beforeunload",
+    () => {
+        saveLocalProgress();
+    }
+);
 
 
 // ============================================================
-// SHOHIN ENGLISH READY
+// READY
 // ============================================================
 
-console.log("🚀 SHOHIN ENGLISH app loaded");
+console.log(
+    "🚀 SHOHIN ENGLISH app loaded"
+);
