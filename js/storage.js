@@ -1,466 +1,933 @@
-// ======================================================
-// SHOHIN ENGLISH — LOCAL STORAGE
-// Контент уроков НЕ хранится здесь.
-// ======================================================
+/* =========================================================
+   SHOHIN ENGLISH — STORAGE
+   Guest progress / local device storage
+   SHOHIN BRAND COLORS — НЕ МЕНЯТЬ
+   ========================================================= */
 
-// SHOHIN BRAND COLORS — НЕ МЕНЯТЬ
+(function () {
 
-const SHOHIN_STORAGE_KEY = "shohinEnglishData";
-
-const DEFAULT_DATA = {
-  version: 2,
-
-  mode: "guest",
-
-  selectedLevel: null,
-
-  currentLesson: {
-    level: null,
-    lesson: null
-  },
-
-  completedLessons: [],
-
-  completedTests: [],
-
-  learnedWords: [],
-
-  achievements: [],
-
-  streak: {
-    current: 0,
-    best: 0,
-    lastDate: null
-  },
-
-  dailyGoal: {
-    target: 10,
-    completed: 0,
-    date: null
-  },
-
-  statistics: {
-    lessonsCompleted: 0,
-    testsCompleted: 0,
-    wordsLearned: 0,
-    totalMinutes: 0
-  },
-
-  settings: {
-    sound: true,
-    notifications: true,
-    language: "en"
-  }
-};
+    "use strict";
 
 
-// ======================================================
-// GET DATA
-// ======================================================
+    /* =====================================================
+       STORAGE KEY
+       ===================================================== */
 
-function getSHOHINData() {
+    const STORAGE_KEY = "shohin_english_guest_v1";
 
-  try {
 
-    const saved =
-      localStorage.getItem(SHOHIN_STORAGE_KEY);
+    /* =====================================================
+       DEFAULT DATA
+       ===================================================== */
 
-    if (!saved) {
+    const DEFAULT_DATA = {
 
-      const fresh =
-        JSON.parse(
-          JSON.stringify(DEFAULT_DATA)
+        version: 1,
+
+        user: {
+            mode: "guest",
+            createdAt: null,
+            lastActiveAt: null
+        },
+
+        learning: {
+            currentLevel: "A1",
+            currentLesson: 1,
+
+            completedLessons: [],
+            completedLevels: [],
+
+            watchedVideos: [],
+            learnedWords: [],
+
+            testResults: {},
+
+            levelProgress: {}
+        },
+
+        settings: {
+            sound: true,
+            notifications: false
+        }
+
+    };
+
+
+    /* =====================================================
+       INTERNAL HELPERS
+       ===================================================== */
+
+    function cloneDefaultData() {
+
+        return JSON.parse(
+            JSON.stringify(DEFAULT_DATA)
         );
 
-      localStorage.setItem(
-        SHOHIN_STORAGE_KEY,
-        JSON.stringify(fresh)
-      );
-
-      return fresh;
     }
 
 
-    const data = JSON.parse(saved);
+    function readData() {
 
+        try {
 
-    return {
-      ...DEFAULT_DATA,
-      ...data,
+            const raw =
+                localStorage.getItem(STORAGE_KEY);
 
-      currentLesson: {
-        ...DEFAULT_DATA.currentLesson,
-        ...(data.currentLesson || {})
-      },
+            if (!raw) {
 
-      streak: {
-        ...DEFAULT_DATA.streak,
-        ...(data.streak || {})
-      },
+                const fresh =
+                    cloneDefaultData();
 
-      dailyGoal: {
-        ...DEFAULT_DATA.dailyGoal,
-        ...(data.dailyGoal || {})
-      },
+                fresh.user.createdAt =
+                    new Date().toISOString();
 
-      statistics: {
-        ...DEFAULT_DATA.statistics,
-        ...(data.statistics || {})
-      },
+                fresh.user.lastActiveAt =
+                    new Date().toISOString();
 
-      settings: {
-        ...DEFAULT_DATA.settings,
-        ...(data.settings || {})
-      }
-    };
+                writeData(fresh);
 
-  } catch (error) {
+                return fresh;
+            }
 
-    console.error(
-      "SHOHIN Storage error:",
-      error
-    );
 
-    return JSON.parse(
-      JSON.stringify(DEFAULT_DATA)
-    );
-  }
-}
+            const parsed =
+                JSON.parse(raw);
 
 
-// ======================================================
-// SAVE DATA
-// ======================================================
+            /*
+             * Merge with defaults.
+             * This protects the app if we add new
+             * storage fields in future versions.
+             */
 
-function saveSHOHINData(data) {
+            const merged =
+                mergeObjects(
+                    cloneDefaultData(),
+                    parsed
+                );
 
-  localStorage.setItem(
-    SHOHIN_STORAGE_KEY,
-    JSON.stringify(data)
-  );
 
-  return data;
-}
+            merged.user.lastActiveAt =
+                new Date().toISOString();
 
 
-// ======================================================
-// UPDATE DATA
-// ======================================================
+            writeData(merged);
 
-function updateSHOHINData(changes) {
 
-  const data =
-    getSHOHINData();
+            return merged;
 
-  const updated = {
-    ...data,
-    ...changes
-  };
+        } catch (error) {
 
-  return saveSHOHINData(updated);
-}
+            console.error(
+                "SHOHIN STORAGE READ ERROR:",
+                error
+            );
 
+            return cloneDefaultData();
+        }
 
-// ======================================================
-// SELECT LEVEL
-// ======================================================
-
-function setSelectedLevel(level) {
-
-  const data =
-    getSHOHINData();
-
-
-  data.selectedLevel = level;
-
-
-  // Если уровень выбран впервые,
-  // начинаем с первого урока.
-
-  if (
-    !data.currentLesson.level ||
-    data.currentLesson.level !== level
-  ) {
-
-    data.currentLesson = {
-      level: level,
-      lesson: 1
-    };
-
-  }
-
-
-  saveSHOHINData(data);
-
-  return data;
-}
-
-
-// ======================================================
-// GET SELECTED LEVEL
-// ======================================================
-
-function getSelectedLevel() {
-
-  return getSHOHINData().selectedLevel;
-}
-
-
-// ======================================================
-// COMPLETE LESSON
-// ======================================================
-
-function completeLesson(
-  level,
-  lessonNumber
-) {
-
-  const data =
-    getSHOHINData();
-
-
-  const exists =
-    data.completedLessons.some(
-      item =>
-        item.level === level &&
-        item.lesson === lessonNumber
-    );
-
-
-  if (!exists) {
-
-    data.completedLessons.push({
-      level: level,
-      lesson: lessonNumber,
-      completedAt: new Date().toISOString()
-    });
-
-  }
-
-
-  data.statistics.lessonsCompleted =
-    data.completedLessons.length;
-
-
-  // Следующий урок
-
-  data.currentLesson = {
-    level: level,
-    lesson: lessonNumber + 1
-  };
-
-
-  saveSHOHINData(data);
-
-  return data;
-}
-
-
-// ======================================================
-// COMPLETE TEST
-// ======================================================
-
-function completeTest(
-  level,
-  score
-) {
-
-  const data =
-    getSHOHINData();
-
-
-  data.completedTests.push({
-    level: level,
-    score: score,
-    completedAt:
-      new Date().toISOString()
-  });
-
-
-  data.statistics.testsCompleted =
-    data.completedTests.length;
-
-
-  saveSHOHINData(data);
-
-  return data;
-}
-
-
-// ======================================================
-// ADD WORD
-// ======================================================
-
-function addLearnedWord(word) {
-
-  const data =
-    getSHOHINData();
-
-
-  if (!data.learnedWords.includes(word)) {
-
-    data.learnedWords.push(word);
-
-  }
-
-
-  data.statistics.wordsLearned =
-    data.learnedWords.length;
-
-
-  saveSHOHINData(data);
-
-  return data;
-}
-
-
-// ======================================================
-// ADD STUDY MINUTES
-// ======================================================
-
-function addStudyMinutes(minutes) {
-
-  const data =
-    getSHOHINData();
-
-
-  data.statistics.totalMinutes +=
-    Number(minutes) || 0;
-
-
-  saveSHOHINData(data);
-
-  return data;
-}
-
-
-// ======================================================
-// ACHIEVEMENT
-// ======================================================
-
-function unlockAchievement(id) {
-
-  const data =
-    getSHOHINData();
-
-
-  if (!data.achievements.includes(id)) {
-
-    data.achievements.push(id);
-
-  }
-
-
-  saveSHOHINData(data);
-
-  return data;
-}
-
-
-// ======================================================
-// RESET
-// ======================================================
-
-function resetSHOHINProgress() {
-
-  const fresh =
-    JSON.parse(
-      JSON.stringify(DEFAULT_DATA)
-    );
-
-
-  localStorage.setItem(
-    SHOHIN_STORAGE_KEY,
-    JSON.stringify(fresh)
-  );
-
-
-  return fresh;
-}
-
-
-// ======================================================
-// EXPORT
-// ======================================================
-
-function exportSHOHINProgress() {
-
-  const data =
-    getSHOHINData();
-
-  return JSON.stringify(
-    data,
-    null,
-    2
-  );
-}
-
-
-// ======================================================
-// IMPORT
-// ======================================================
-
-function importSHOHINProgress(json) {
-
-  try {
-
-    const data =
-      typeof json === "string"
-        ? JSON.parse(json)
-        : json;
-
-
-    if (!data || typeof data !== "object") {
-      return false;
     }
 
 
-    saveSHOHINData(data);
+    function writeData(data) {
 
-    return true;
+        try {
 
-  } catch (error) {
+            localStorage.setItem(
+                STORAGE_KEY,
+                JSON.stringify(data)
+            );
 
-    console.error(
-      "Import error:",
-      error
-    );
+            return true;
 
-    return false;
-  }
-}
+        } catch (error) {
+
+            console.error(
+                "SHOHIN STORAGE WRITE ERROR:",
+                error
+            );
+
+            return false;
+        }
+
+    }
 
 
-// ======================================================
-// GLOBAL API
-// ======================================================
+    function mergeObjects(base, extra) {
 
-window.SHOHINStorage = {
+        if (
+            typeof base !== "object" ||
+            base === null
+        ) {
+            return extra;
+        }
 
-  get: getSHOHINData,
 
-  save: saveSHOHINData,
+        if (
+            typeof extra !== "object" ||
+            extra === null
+        ) {
+            return base;
+        }
 
-  update: updateSHOHINData,
 
-  setLevel: setSelectedLevel,
+        const result = {
+            ...base
+        };
 
-  getLevel: getSelectedLevel,
 
-  completeLesson: completeLesson,
+        Object.keys(extra).forEach(function (key) {
 
-  completeTest: completeTest,
+            if (
+                typeof extra[key] === "object" &&
+                extra[key] !== null &&
+                !Array.isArray(extra[key]) &&
 
-  addWord: addLearnedWord,
+                typeof result[key] === "object" &&
+                result[key] !== null &&
+                !Array.isArray(result[key])
+            ) {
 
-  addMinutes: addStudyMinutes,
+                result[key] =
+                    mergeObjects(
+                        result[key],
+                        extra[key]
+                    );
 
-  achievement: unlockAchievement,
+            } else {
 
-  reset: resetSHOHINProgress,
+                result[key] =
+                    extra[key];
 
-  export: exportSHOHINProgress,
+            }
 
-  import: importSHOHINProgress
+        });
 
-};
+
+        return result;
+    }
+
+
+    function updateData(callback) {
+
+        const data = readData();
+
+        callback(data);
+
+        data.user.lastActiveAt =
+            new Date().toISOString();
+
+        writeData(data);
+
+        return data;
+    }
+
+
+    /* =====================================================
+       PUBLIC API
+       ===================================================== */
+
+    window.ShohinStorage = {
+
+
+        /* ================================================
+           GET ALL DATA
+           ================================================ */
+
+        get: function () {
+
+            return readData();
+
+        },
+
+
+        /* ================================================
+           RESET
+           ================================================ */
+
+        reset: function () {
+
+            const fresh =
+                cloneDefaultData();
+
+            fresh.user.createdAt =
+                new Date().toISOString();
+
+            fresh.user.lastActiveAt =
+                new Date().toISOString();
+
+            writeData(fresh);
+
+            return fresh;
+
+        },
+
+
+        /* ================================================
+           CURRENT LEVEL
+           ================================================ */
+
+        getCurrentLevel: function () {
+
+            const data = readData();
+
+            return data.learning.currentLevel;
+
+        },
+
+
+        setCurrentLevel: function (levelCode) {
+
+            if (!levelCode) {
+                return false;
+            }
+
+            updateData(function (data) {
+
+                data.learning.currentLevel =
+                    String(levelCode).toUpperCase();
+
+            });
+
+            return true;
+
+        },
+
+
+        /* ================================================
+           CURRENT LESSON
+           ================================================ */
+
+        getCurrentLesson: function () {
+
+            const data = readData();
+
+            return data.learning.currentLesson;
+
+        },
+
+
+        setCurrentLesson: function (lessonNumber) {
+
+            const number =
+                Number(lessonNumber);
+
+            if (
+                !Number.isFinite(number) ||
+                number < 1
+            ) {
+                return false;
+            }
+
+
+            updateData(function (data) {
+
+                data.learning.currentLesson =
+                    number;
+
+            });
+
+
+            return true;
+
+        },
+
+
+        /* ================================================
+           COMPLETED LESSONS
+           ================================================ */
+
+        getCompletedLessons: function () {
+
+            const data = readData();
+
+            return [
+                ...data.learning.completedLessons
+            ];
+
+        },
+
+
+        isLessonCompleted: function (
+            levelCode,
+            lessonNumber
+        ) {
+
+            const id =
+                createLessonId(
+                    levelCode,
+                    lessonNumber
+                );
+
+
+            const data = readData();
+
+
+            return data.learning.completedLessons
+                .includes(id);
+
+        },
+
+
+        completeLesson: function (
+            levelCode,
+            lessonNumber
+        ) {
+
+            const id =
+                createLessonId(
+                    levelCode,
+                    lessonNumber
+                );
+
+
+            updateData(function (data) {
+
+                if (
+                    !data.learning.completedLessons
+                        .includes(id)
+                ) {
+
+                    data.learning.completedLessons
+                        .push(id);
+
+                }
+
+            });
+
+
+            return true;
+
+        },
+
+
+        /* ================================================
+           COMPLETED LEVELS
+           ================================================ */
+
+        getCompletedLevels: function () {
+
+            const data = readData();
+
+            return [
+                ...data.learning.completedLevels
+            ];
+
+        },
+
+
+        isLevelCompleted: function (
+            levelCode
+        ) {
+
+            const code =
+                String(levelCode)
+                    .toUpperCase();
+
+
+            const data = readData();
+
+
+            return data.learning.completedLevels
+                .includes(code);
+
+        },
+
+
+        completeLevel: function (
+            levelCode
+        ) {
+
+            const code =
+                String(levelCode)
+                    .toUpperCase();
+
+
+            updateData(function (data) {
+
+                if (
+                    !data.learning.completedLevels
+                        .includes(code)
+                ) {
+
+                    data.learning.completedLevels
+                        .push(code);
+
+                }
+
+            });
+
+
+            return true;
+
+        },
+
+
+        /* ================================================
+           VIDEO PROGRESS
+           ================================================ */
+
+        getWatchedVideos: function () {
+
+            const data = readData();
+
+            return [
+                ...data.learning.watchedVideos
+            ];
+
+        },
+
+
+        isVideoWatched: function (
+            levelCode,
+            videoId
+        ) {
+
+            const id =
+                createVideoId(
+                    levelCode,
+                    videoId
+                );
+
+
+            const data = readData();
+
+
+            return data.learning.watchedVideos
+                .includes(id);
+
+        },
+
+
+        markVideoWatched: function (
+            levelCode,
+            videoId
+        ) {
+
+            const id =
+                createVideoId(
+                    levelCode,
+                    videoId
+                );
+
+
+            updateData(function (data) {
+
+                if (
+                    !data.learning.watchedVideos
+                        .includes(id)
+                ) {
+
+                    data.learning.watchedVideos
+                        .push(id);
+
+                }
+
+            });
+
+
+            return true;
+
+        },
+
+
+        /* ================================================
+           VOCABULARY
+           ================================================ */
+
+        getLearnedWords: function () {
+
+            const data = readData();
+
+            return [
+                ...data.learning.learnedWords
+            ];
+
+        },
+
+
+        isWordLearned: function (
+            wordId
+        ) {
+
+            const id =
+                String(wordId);
+
+
+            const data = readData();
+
+
+            return data.learning.learnedWords
+                .includes(id);
+
+        },
+
+
+        markWordLearned: function (
+            wordId
+        ) {
+
+            const id =
+                String(wordId);
+
+
+            updateData(function (data) {
+
+                if (
+                    !data.learning.learnedWords
+                        .includes(id)
+                ) {
+
+                    data.learning.learnedWords
+                        .push(id);
+
+                }
+
+            });
+
+
+            return true;
+
+        },
+
+
+        /* ================================================
+           TEST RESULTS
+           ================================================ */
+
+        getTestResult: function (
+            levelCode,
+            testId
+        ) {
+
+            const key =
+                createTestId(
+                    levelCode,
+                    testId
+                );
+
+
+            const data = readData();
+
+
+            return (
+                data.learning.testResults[key] ||
+                null
+            );
+
+        },
+
+
+        saveTestResult: function (
+            levelCode,
+            testId,
+            result
+        ) {
+
+            const key =
+                createTestId(
+                    levelCode,
+                    testId
+                );
+
+
+            updateData(function (data) {
+
+                data.learning.testResults[key] = {
+
+                    score:
+                        Number(result.score) || 0,
+
+                    total:
+                        Number(result.total) || 0,
+
+                    percentage:
+                        Number(result.percentage) || 0,
+
+                    passed:
+                        Boolean(result.passed),
+
+                    completedAt:
+                        new Date().toISOString()
+
+                };
+
+            });
+
+
+            return true;
+
+        },
+
+
+        /* ================================================
+           LEVEL PROGRESS
+           ================================================ */
+
+        getLevelProgress: function (
+            levelCode
+        ) {
+
+            const code =
+                String(levelCode)
+                    .toUpperCase();
+
+
+            const data = readData();
+
+
+            return (
+                Number(
+                    data.learning.levelProgress[code]
+                ) || 0
+            );
+
+        },
+
+
+        setLevelProgress: function (
+            levelCode,
+            percentage
+        ) {
+
+            const code =
+                String(levelCode)
+                    .toUpperCase();
+
+
+            let value =
+                Number(percentage);
+
+
+            if (!Number.isFinite(value)) {
+                value = 0;
+            }
+
+
+            value =
+                Math.max(
+                    0,
+                    Math.min(
+                        100,
+                        value
+                    )
+                );
+
+
+            updateData(function (data) {
+
+                data.learning.levelProgress[code] =
+                    Math.round(value);
+
+            });
+
+
+            return true;
+
+        },
+
+
+        /* ================================================
+           SETTINGS
+           ================================================ */
+
+        getSetting: function (
+            key
+        ) {
+
+            const data = readData();
+
+            return data.settings[key];
+
+        },
+
+
+        setSetting: function (
+            key,
+            value
+        ) {
+
+            updateData(function (data) {
+
+                data.settings[key] =
+                    value;
+
+            });
+
+
+            return true;
+
+        },
+
+
+        /* ================================================
+           STATISTICS
+           ================================================ */
+
+        getStatistics: function () {
+
+            const data = readData();
+
+
+            const completedLessons =
+                data.learning.completedLessons.length;
+
+
+            const watchedVideos =
+                data.learning.watchedVideos.length;
+
+
+            const learnedWords =
+                data.learning.learnedWords.length;
+
+
+            const completedLevels =
+                data.learning.completedLevels.length;
+
+
+            const testResults =
+                Object.values(
+                    data.learning.testResults
+                );
+
+
+            let averageScore = 0;
+
+
+            if (testResults.length > 0) {
+
+                const total =
+                    testResults.reduce(
+                        function (
+                            sum,
+                            item
+                        ) {
+
+                            return (
+                                sum +
+                                Number(
+                                    item.percentage
+                                )
+                            );
+
+                        },
+                        0
+                    );
+
+
+                averageScore =
+                    Math.round(
+                        total /
+                        testResults.length
+                    );
+
+            }
+
+
+            return {
+
+                lessons:
+                    completedLessons,
+
+                videos:
+                    watchedVideos,
+
+                words:
+                    learnedWords,
+
+                levels:
+                    completedLevels,
+
+                tests:
+                    testResults.length,
+
+                averageTestScore:
+                    averageScore
+
+            };
+
+        }
+
+    };
+
+
+    /* =====================================================
+       ID HELPERS
+       ===================================================== */
+
+    function createLessonId(
+        levelCode,
+        lessonNumber
+    ) {
+
+        return (
+            String(levelCode)
+                .toUpperCase() +
+            "_LESSON_" +
+            String(lessonNumber)
+        );
+
+    }
+
+
+    function createVideoId(
+        levelCode,
+        videoId
+    ) {
+
+        return (
+            String(levelCode)
+                .toUpperCase() +
+            "_VIDEO_" +
+            String(videoId)
+        );
+
+    }
+
+
+    function createTestId(
+        levelCode,
+        testId
+    ) {
+
+        return (
+            String(levelCode)
+                .toUpperCase() +
+            "_TEST_" +
+            String(testId)
+        );
+
+    }
+
+
+    /* =====================================================
+       DEBUG SUPPORT
+       ===================================================== */
+
+    window.ShohinStorageDebug = {
+
+        show: function () {
+
+            console.log(
+                "SHOHIN ENGLISH STORAGE:",
+                readData()
+            );
+
+        },
+
+        clear: function () {
+
+            localStorage.removeItem(
+                STORAGE_KEY
+            );
+
+            console.log(
+                "SHOHIN ENGLISH storage cleared."
+            );
+
+        }
+
+    };
+
+
+})();
