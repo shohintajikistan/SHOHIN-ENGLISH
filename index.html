@@ -1,997 +1,920 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>SHOHIN ENGLISH</title>
+  <meta charset="UTF-8">
 
-<meta
-    name="description"
-    content="SHOHIN ENGLISH — Learn English step by step."
->
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+  >
 
-<meta name="theme-color" content="#071c16">
+  <meta name="theme-color" content="#071c16">
+  <meta name="description" content="SHOHIN ENGLISH — Learn English from A1 to C2">
 
-<link rel="stylesheet" href="css/style.css">
-<link rel="stylesheet" href="css/components.css">
+  <link rel="manifest" href="manifest.json">
 
-<link rel="manifest" href="manifest.json">
+  <title>SHOHIN ENGLISH</title>
 
-<!-- Font Awesome -->
-<link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
->
+  <style>
+    :root {
+      --dark: #071c16;
+      --dark2: #0d3024;
+      --green: #08a56c;
+      --green2: #087b53;
+      --lime: #baf05b;
+      --white: #ffffff;
+      --text: #eaf5ef;
+      --muted: #9fb8ad;
+      --card: rgba(255,255,255,.06);
+      --border: rgba(255,255,255,.08);
+    }
 
-</head><body><!-- =========================================================
-     SPLASH SCREEN
-     ========================================================= --><div id="splashScreen" class="splash-screen"><div class="splash-logo">
-    <div class="splash-logo-mark">SH</div>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-    <div class="splash-brand">
-        <strong>SHOHIN</strong>
-        <span>ENGLISH</span>
+    body {
+      font-family: Arial, sans-serif;
+      background: var(--dark);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    button {
+      font: inherit;
+      border: 0;
+      cursor: pointer;
+    }
+
+    /* =========================
+       SPLASH
+    ========================= */
+
+    #splash {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+
+      background:
+        radial-gradient(
+          circle at center,
+          var(--dark2),
+          var(--dark) 70%
+        );
+    }
+
+    .logo {
+      width: 82px;
+      height: 82px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      border-radius: 24px;
+
+      background: var(--green);
+      color: var(--dark);
+
+      font-size: 28px;
+      font-weight: 900;
+
+      box-shadow: 0 15px 50px rgba(8,165,108,.25);
+    }
+
+    .splash-title {
+      margin-top: 18px;
+      font-size: 25px;
+      font-weight: 900;
+      letter-spacing: .5px;
+    }
+
+    .splash-subtitle {
+      margin-top: 7px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    /* =========================
+       APP
+    ========================= */
+
+    #app {
+      display: none;
+      min-height: 100vh;
+      padding-bottom: 85px;
+    }
+
+    .header {
+      padding: 20px 18px 15px;
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      background: var(--dark);
+    }
+
+    .brand {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .brand-name {
+      font-size: 20px;
+      font-weight: 900;
+    }
+
+    .brand-sub {
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .menu-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+
+      background: var(--card);
+      color: var(--white);
+
+      font-size: 20px;
+    }
+
+    /* =========================
+       WELCOME
+    ========================= */
+
+    .welcome {
+      margin: 5px 16px 18px;
+      padding: 22px;
+
+      border-radius: 24px;
+
+      background:
+        linear-gradient(
+          135deg,
+          var(--dark2),
+          rgba(8,165,108,.15)
+        );
+
+      border: 1px solid var(--border);
+    }
+
+    .welcome h1 {
+      font-size: 25px;
+      line-height: 1.2;
+    }
+
+    .welcome p {
+      margin-top: 9px;
+      color: var(--muted);
+      line-height: 1.5;
+      font-size: 14px;
+    }
+
+    .guest-badge {
+      display: inline-flex;
+      margin-top: 16px;
+      padding: 8px 12px;
+
+      border-radius: 999px;
+
+      background: rgba(186,240,91,.12);
+      color: var(--lime);
+
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    /* =========================
+       PROGRESS
+    ========================= */
+
+    .progress-card {
+      margin: 0 16px 20px;
+      padding: 18px;
+
+      border-radius: 20px;
+      background: var(--card);
+      border: 1px solid var(--border);
+    }
+
+    .progress-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      margin-bottom: 12px;
+    }
+
+    .progress-title {
+      font-weight: 800;
+    }
+
+    .progress-percent {
+      color: var(--lime);
+      font-weight: 800;
+    }
+
+    .progress-bar {
+      height: 8px;
+      border-radius: 20px;
+      overflow: hidden;
+      background: rgba(255,255,255,.08);
+    }
+
+    .progress-fill {
+      width: 0%;
+      height: 100%;
+      background: var(--green);
+      border-radius: inherit;
+      transition: width .3s ease;
+    }
+
+    /* =========================
+       LEVELS
+    ========================= */
+
+    .section-title {
+      margin: 0 16px 12px;
+      font-size: 19px;
+      font-weight: 900;
+    }
+
+    .levels {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+
+      padding: 0 16px;
+    }
+
+    .level {
+      position: relative;
+
+      min-height: 125px;
+      padding: 17px;
+
+      text-align: left;
+
+      border-radius: 20px;
+
+      background: var(--card);
+      color: var(--white);
+
+      border: 1px solid var(--border);
+
+      transition: transform .15s ease,
+                  border-color .15s ease;
+    }
+
+    .level:active {
+      transform: scale(.97);
+    }
+
+    .level-code {
+      font-size: 25px;
+      font-weight: 900;
+      color: var(--lime);
+    }
+
+    .level-name {
+      margin-top: 8px;
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .level-lessons {
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    /* =========================
+       DAILY
+    ========================= */
+
+    .daily {
+      margin: 22px 16px;
+      padding: 18px;
+
+      border-radius: 20px;
+
+      background: linear-gradient(
+        135deg,
+        var(--green2),
+        var(--green)
+      );
+    }
+
+    .daily-title {
+      font-size: 17px;
+      font-weight: 900;
+    }
+
+    .daily-text {
+      margin-top: 6px;
+      font-size: 13px;
+      opacity: .9;
+    }
+
+    .start-btn {
+      margin-top: 15px;
+      padding: 12px 17px;
+
+      border-radius: 13px;
+
+      background: var(--lime);
+      color: var(--dark);
+
+      font-weight: 900;
+    }
+
+    /* =========================
+       BOTTOM NAV
+    ========================= */
+
+    .bottom-nav {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+
+      height: 72px;
+
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+
+      background: rgba(7,28,22,.96);
+      backdrop-filter: blur(14px);
+
+      border-top: 1px solid var(--border);
+
+      z-index: 1000;
+    }
+
+    .nav-btn {
+      min-width: 70px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+
+      gap: 4px;
+
+      background: transparent;
+      color: var(--muted);
+
+      font-size: 11px;
+    }
+
+    .nav-icon {
+      font-size: 21px;
+    }
+
+    .nav-btn.active {
+      color: var(--lime);
+    }
+
+    /* =========================
+       MENU
+    ========================= */
+
+    #menu {
+      position: fixed;
+      inset: 0;
+
+      z-index: 5000;
+
+      display: none;
+
+      background: rgba(0,0,0,.65);
+    }
+
+    .menu-panel {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+
+      width: min(330px, 88%);
+
+      padding: 25px 18px;
+
+      background: var(--dark2);
+
+      box-shadow: -20px 0 50px rgba(0,0,0,.25);
+    }
+
+    .menu-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      margin-bottom: 25px;
+    }
+
+    .menu-head h2 {
+      font-size: 21px;
+    }
+
+    .close-menu {
+      width: 42px;
+      height: 42px;
+
+      border-radius: 13px;
+
+      background: var(--card);
+      color: var(--white);
+
+      font-size: 20px;
+    }
+
+    .menu-item {
+      width: 100%;
+
+      padding: 15px 14px;
+      margin-bottom: 8px;
+
+      display: flex;
+      align-items: center;
+      gap: 12px;
+
+      border-radius: 14px;
+
+      background: var(--card);
+      color: var(--text);
+
+      text-align: left;
+    }
+
+    .menu-item small {
+      display: block;
+      margin-top: 3px;
+      color: var(--muted);
+    }
+
+    @media (min-width: 700px) {
+      #app {
+        max-width: 700px;
+        margin: auto;
+      }
+
+      .bottom-nav {
+        left: 50%;
+        right: auto;
+        width: 700px;
+        transform: translateX(-50%);
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- =========================
+       SPLASH
+  ========================= -->
+
+  <div id="splash">
+    <div class="logo">SH</div>
+
+    <div class="splash-title">
+      SHOHIN ENGLISH
     </div>
-</div>
 
-<p class="splash-text">
-    Learn English. Build your future.
-</p>
-
-<div class="splash-loader">
-    <span></span>
-    <span></span>
-    <span></span>
-</div>
-
-</div><!-- =========================================================
-     AUTH SCREEN
-     ========================================================= --><section id="authScreen" class="auth-screen hidden"><div class="auth-container">
-
-    <div class="auth-brand">
-
-        <div class="auth-logo-mark">
-            SH
-        </div>
-
-        <h1>SHOHIN ENGLISH</h1>
-
-        <p>
-            Learn English step by step
-        </p>
-
+    <div class="splash-subtitle">
+      Learn English • A1 — C2
     </div>
+  </div>
 
 
-    <!-- LOGIN -->
+  <!-- =========================
+       APP
+  ========================= -->
 
-    <div id="loginBox" class="auth-box">
+  <main id="app">
 
-        <div class="auth-title">
-            <h2>Welcome back</h2>
-            <p>Login to continue learning</p>
+    <header class="header">
+
+      <div class="brand">
+        <div class="brand-name">
+          SHOHIN ENGLISH
         </div>
 
-        <form id="loginForm">
-
-            <div class="input-group">
-
-                <label for="loginEmail">
-                    Email
-                </label>
-
-                <div class="input-wrapper">
-
-                    <i class="fa-solid fa-envelope"></i>
-
-                    <input
-                        id="loginEmail"
-                        type="email"
-                        placeholder="Enter your email"
-                        required
-                    >
-
-                </div>
-
-            </div>
-
-
-            <div class="input-group">
-
-                <label for="loginPassword">
-                    Password
-                </label>
-
-                <div class="input-wrapper">
-
-                    <i class="fa-solid fa-lock"></i>
-
-                    <input
-                        id="loginPassword"
-                        type="password"
-                        placeholder="Enter your password"
-                        minlength="6"
-                        required
-                    >
-
-                </div>
-
-            </div>
-
-
-            <button
-                type="submit"
-                class="primary-button"
-            >
-                <span>Login</span>
-                <i class="fa-solid fa-arrow-right"></i>
-            </button>
-
-        </form>
-
-
-        <div class="auth-switch">
-
-            <span>Don't have an account?</span>
-
-            <button
-                type="button"
-                data-auth="register"
-            >
-                Create account
-            </button>
-
+        <div class="brand-sub">
+          English learning platform
         </div>
+      </div>
 
-    </div>
-
-
-    <!-- REGISTER -->
-
-    <div id="registerBox" class="auth-box hidden">
-
-        <div class="auth-title">
-
-            <h2>Create account</h2>
-
-            <p>
-                Start your English journey
-            </p>
-
-        </div>
-
-
-        <form id="registerForm">
-
-            <div class="input-group">
-
-                <label for="registerName">
-                    Your name
-                </label>
-
-                <div class="input-wrapper">
-
-                    <i class="fa-solid fa-user"></i>
-
-                    <input
-                        id="registerName"
-                        type="text"
-                        placeholder="Enter your name"
-                        required
-                    >
-
-                </div>
-
-            </div>
-
-
-            <div class="input-group">
-
-                <label for="registerEmail">
-                    Email
-                </label>
-
-                <div class="input-wrapper">
-
-                    <i class="fa-solid fa-envelope"></i>
-
-                    <input
-                        id="registerEmail"
-                        type="email"
-                        placeholder="Enter your email"
-                        required
-                    >
-
-                </div>
-
-            </div>
-
-
-            <div class="input-group">
-
-                <label for="registerPassword">
-                    Password
-                </label>
-
-                <div class="input-wrapper">
-
-                    <i class="fa-solid fa-lock"></i>
-
-                    <input
-                        id="registerPassword"
-                        type="password"
-                        placeholder="Minimum 6 characters"
-                        minlength="6"
-                        required
-                    >
-
-                </div>
-
-            </div>
-
-
-            <button
-                type="submit"
-                class="primary-button"
-            >
-                <span>Create account</span>
-                <i class="fa-solid fa-user-plus"></i>
-            </button>
-
-        </form>
-
-
-        <div class="auth-switch">
-
-            <span>Already have an account?</span>
-
-            <button
-                type="button"
-                data-auth="login"
-            >
-                Login
-            </button>
-
-        </div>
-
-    </div>
-
-</div>
-
-</section><!-- =========================================================
-     MAIN APPLICATION
-     ========================================================= --><div id="appScreen" class="app-screen hidden"><!-- HEADER -->
-
-<header class="app-header">
-
-    <button
-        id="menuButton"
-        class="icon-button"
+      <button
+        class="menu-btn"
+        id="openMenu"
         aria-label="Open menu"
-    >
-        <i class="fa-solid fa-bars"></i>
-    </button>
+      >
+        ☰
+      </button>
+
+    </header>
 
 
-    <div class="header-brand">
+    <!-- WELCOME -->
 
-        <strong>SHOHIN</strong>
-        <span>ENGLISH</span>
+    <section class="welcome">
 
-    </div>
+      <h1>
+        Start learning English
+      </h1>
 
+      <p>
+        Learn step by step from A1 Beginner
+        to C2 Proficiency.
+      </p>
 
-    <button
-        class="icon-button"
-        data-page="profile"
-        aria-label="Profile"
-    >
-        <i class="fa-solid fa-user"></i>
-    </button>
+      <div class="guest-badge">
+        ● Guest mode — no account required
+      </div>
 
-</header>
-
-
-<!-- SIDE MENU -->
-
-<div id="menuOverlay" class="menu-overlay"></div>
+    </section>
 
 
-<aside id="sideMenu" class="side-menu">
+    <!-- PROGRESS -->
 
-    <div class="side-menu-header">
+    <section class="progress-card">
 
-        <div class="side-menu-brand">
+      <div class="progress-top">
 
-            <div class="menu-logo">
-                SH
-            </div>
+        <span class="progress-title">
+          Your progress
+        </span>
 
-            <div>
-                <strong>SHOHIN</strong>
-                <span>ENGLISH</span>
-            </div>
-
-        </div>
-
-
-        <button
-            id="closeMenu"
-            class="icon-button"
-            aria-label="Close menu"
+        <span
+          class="progress-percent"
+          id="progressPercent"
         >
-            <i class="fa-solid fa-xmark"></i>
-        </button>
+          0%
+        </span>
 
-    </div>
+      </div>
+
+      <div class="progress-bar">
+        <div
+          class="progress-fill"
+          id="progressFill"
+        ></div>
+      </div>
+
+    </section>
 
 
-    <nav class="side-navigation">
+    <!-- LEVELS -->
 
-        <button data-page="home">
-            <i class="fa-solid fa-house"></i>
-            <span>Home</span>
-        </button>
+    <h2 class="section-title">
+      Choose your level
+    </h2>
 
-        <button data-page="courses">
-            <i class="fa-solid fa-graduation-cap"></i>
-            <span>Courses</span>
-        </button>
+    <section class="levels">
 
-        <button data-page="vocabulary">
-            <i class="fa-solid fa-book"></i>
-            <span>Vocabulary</span>
-        </button>
+      <button class="level" data-level="A1">
+        <div class="level-code">A1</div>
+        <div class="level-name">Beginner</div>
+        <div class="level-lessons">20 lessons</div>
+      </button>
 
-        <button data-page="tests">
-            <i class="fa-solid fa-clipboard-check"></i>
-            <span>Tests</span>
-        </button>
+      <button class="level" data-level="A2">
+        <div class="level-code">A2</div>
+        <div class="level-name">Elementary</div>
+        <div class="level-lessons">25 lessons</div>
+      </button>
 
-        <button data-page="achievements">
-            <i class="fa-solid fa-trophy"></i>
-            <span>Achievements</span>
-        </button>
+      <button class="level" data-level="B1">
+        <div class="level-code">B1</div>
+        <div class="level-name">Intermediate</div>
+        <div class="level-lessons">30 lessons</div>
+      </button>
 
-        <button data-page="profile">
-            <i class="fa-solid fa-user"></i>
-            <span>Profile</span>
-        </button>
+      <button class="level" data-level="B2">
+        <div class="level-code">B2</div>
+        <div class="level-name">Upper-Intermediate</div>
+        <div class="level-lessons">30 lessons</div>
+      </button>
 
-        <button data-page="settings">
-            <i class="fa-solid fa-gear"></i>
-            <span>Settings</span>
-        </button>
+      <button class="level" data-level="C1">
+        <div class="level-code">C1</div>
+        <div class="level-name">Advanced</div>
+        <div class="level-lessons">35 lessons</div>
+      </button>
+
+      <button class="level" data-level="C2">
+        <div class="level-code">C2</div>
+        <div class="level-name">Proficiency</div>
+        <div class="level-lessons">40 lessons</div>
+      </button>
+
+    </section>
+
+
+    <!-- DAILY GOAL -->
+
+    <section class="daily">
+
+      <div class="daily-title">
+        🎯 Daily learning
+      </div>
+
+      <div class="daily-text">
+        Build your English habit every day.
+      </div>
+
+      <button class="start-btn" id="startLearning">
+        Start learning
+      </button>
+
+    </section>
+
+
+    <!-- BOTTOM NAV -->
+
+    <nav class="bottom-nav">
+
+      <button class="nav-btn active">
+        <span class="nav-icon">⌂</span>
+        Home
+      </button>
+
+      <button class="nav-btn" id="lessonsNav">
+        <span class="nav-icon">▣</span>
+        Lessons
+      </button>
+
+      <button class="nav-btn">
+        <span class="nav-icon">★</span>
+        Progress
+      </button>
+
+      <button class="nav-btn" id="profileNav">
+        <span class="nav-icon">●</span>
+        Profile
+      </button>
 
     </nav>
 
+  </main>
 
-    <div class="side-menu-bottom">
+
+  <!-- =========================
+       MENU
+  ========================= -->
+
+  <div id="menu">
+
+    <aside class="menu-panel">
+
+      <div class="menu-head">
+
+        <h2>SHOHIN ENGLISH</h2>
 
         <button
-            data-action="logout"
-            class="logout-button"
+          class="close-menu"
+          id="closeMenu"
         >
-            <i class="fa-solid fa-right-from-bracket"></i>
-            <span>Logout</span>
+          ×
         </button>
 
-    </div>
+      </div>
 
-</aside>
 
-
-<!-- =====================================================
-     PAGE CONTENT
-     ===================================================== -->
-
-<main class="main-content">
-
-
-    <!-- HOME -->
-
-    <section
-        id="homePage"
-        class="page active"
-    >
-
-        <div class="welcome-section">
-
-            <div>
-
-                <span class="small-label">
-                    SHOHIN ENGLISH
-                </span>
-
-                <h1>
-                    Learn English.<br>
-                    Build your future.
-                </h1>
-
-                <p>
-                    Continue your learning journey.
-                </p>
-
-            </div>
-
-        </div>
-
-
-        <!-- PROGRESS -->
-
-        <div class="progress-card">
-
-            <div class="progress-card-top">
-
-                <div>
-
-                    <span class="card-label">
-                        YOUR PROGRESS
-                    </span>
-
-                    <h2>
-                        <span id="progressPercent">0</span>%
-                    </h2>
-
-                </div>
-
-                <div class="progress-icon">
-                    <i class="fa-solid fa-chart-line"></i>
-                </div>
-
-            </div>
-
-
-            <div class="progress-bar">
-
-                <div
-                    id="progressBar"
-                    class="progress-fill"
-                    style="width:0%"
-                ></div>
-
-            </div>
-
-
-            <div class="progress-info">
-
-                <span>
-                    <i class="fa-solid fa-book-open"></i>
-                    <span id="completedLessons">0</span> lessons
-                </span>
-
-                <span>
-                    <i class="fa-solid fa-fire"></i>
-                    <span id="streakDays">0</span> days
-                </span>
-
-            </div>
-
-        </div>
-
-
-        <!-- CONTINUE -->
-
-        <div class="section-header">
-
-            <div>
-
-                <span class="small-label">
-                    CONTINUE LEARNING
-                </span>
-
-                <h2>
-                    Your course
-                </h2>
-
-            </div>
-
-            <button data-page="courses">
-                View all
-            </button>
-
-        </div>
-
-
-        <div id="homeCourseCard" class="course-card">
-
-            <div class="course-level">
-                A1
-            </div>
-
-            <div class="course-content">
-
-                <span class="course-label">
-                    BEGINNER
-                </span>
-
-                <h3>
-                    English A1
-                </h3>
-
-                <p>
-                    Build your English foundation.
-                </p>
-
-                <div class="course-meta">
-
-                    <span>
-                        <i class="fa-solid fa-book"></i>
-                        20 lessons
-                    </span>
-
-                    <span>
-                        <i class="fa-solid fa-clock"></i>
-                        Beginner
-                    </span>
-
-                </div>
-
-            </div>
-
-            <i class="fa-solid fa-chevron-right course-arrow"></i>
-
-        </div>
-
-
-        <!-- QUICK ACCESS -->
-
-        <div class="section-header">
-
-            <div>
-
-                <span class="small-label">
-                    EXPLORE
-                </span>
-
-                <h2>
-                    Quick access
-                </h2>
-
-            </div>
-
-        </div>
-
-
-        <div class="quick-grid">
-
-            <button data-page="vocabulary">
-
-                <div class="quick-icon">
-                    <i class="fa-solid fa-book-open"></i>
-                </div>
-
-                <span>Vocabulary</span>
-
-            </button>
-
-
-            <button data-page="tests">
-
-                <div class="quick-icon">
-                    <i class="fa-solid fa-pen-to-square"></i>
-                </div>
-
-                <span>Tests</span>
-
-            </button>
-
-
-            <button data-page="achievements">
-
-                <div class="quick-icon">
-                    <i class="fa-solid fa-trophy"></i>
-                </div>
-
-                <span>Achievements</span>
-
-            </button>
-
-
-            <button data-page="profile">
-
-                <div class="quick-icon">
-                    <i class="fa-solid fa-user"></i>
-                </div>
-
-                <span>Profile</span>
-
-            </button>
-
-        </div>
-
-    </section>
-
-
-    <!-- COURSES -->
-
-    <section
-        id="coursesPage"
-        class="page"
-    >
-
-        <div class="page-title">
-
-            <span class="small-label">
-                SHOHIN ENGLISH
-            </span>
-
-            <h1>
-                Courses
-            </h1>
-
-            <p>
-                Choose your English level.
-            </p>
-
-        </div>
-
-
-        <div id="coursesList" class="courses-list"></div>
-
-    </section>
-
-
-    <!-- VOCABULARY -->
-
-    <section
-        id="vocabularyPage"
-        class="page"
-    >
-
-        <div class="page-title">
-
-            <span class="small-label">
-                WORDS
-            </span>
-
-            <h1>
-                Vocabulary
-            </h1>
-
-            <p>
-                Learn new words every day.
-            </p>
-
-        </div>
-
-
-        <div class="search-box">
-
-            <i class="fa-solid fa-magnifying-glass"></i>
-
-            <input
-                id="vocabularySearch"
-                type="search"
-                placeholder="Search vocabulary..."
-            >
-
-        </div>
-
-
-        <div
-            id="vocabularyList"
-            class="vocabulary-list"
-        ></div>
-
-    </section>
-
-
-    <!-- TESTS -->
-
-    <section
-        id="testsPage"
-        class="page"
-    >
-
-        <div class="page-title">
-
-            <span class="small-label">
-                PRACTICE
-            </span>
-
-            <h1>
-                Tests
-            </h1>
-
-            <p>
-                Check what you have learned.
-            </p>
-
-        </div>
-
-
-        <div
-            id="testsList"
-            class="tests-list"
-        ></div>
-
-    </section>
-
-
-    <!-- ACHIEVEMENTS -->
-
-    <section
-        id="achievementsPage"
-        class="page"
-    >
-
-        <div class="page-title">
-
-            <span class="small-label">
-                YOUR JOURNEY
-            </span>
-
-            <h1>
-                Achievements
-            </h1>
-
-            <p>
-                Complete lessons and unlock achievements.
-            </p>
-
-        </div>
-
-
-        <div
-            id="achievementsList"
-            class="achievements-list"
-        ></div>
-
-    </section>
-
-
-    <!-- PROFILE -->
-
-    <section
-        id="profilePage"
-        class="page"
-    >
-
-        <div class="page-title">
-
-            <span class="small-label">
-                ACCOUNT
-            </span>
-
-            <h1>
-                Profile
-            </h1>
-
-        </div>
-
-
-        <div class="profile-card">
-
-            <div class="profile-avatar">
-                <i class="fa-solid fa-user"></i>
-            </div>
-
-
-            <div class="profile-info">
-
-                <h2 id="profileName">
-                    Student
-                </h2>
-
-                <p id="profileEmail">
-                    —
-                </p>
-
-            </div>
-
-        </div>
-
-
-        <div class="profile-stats">
-
-            <div class="stat-card">
-
-                <strong id="profileLessons">
-                    0
-                </strong>
-
-                <span>
-                    Lessons
-                </span>
-
-            </div>
-
-
-            <div class="stat-card">
-
-                <strong id="profileStreak">
-                    0
-                </strong>
-
-                <span>
-                    Day streak
-                </span>
-
-            </div>
-
-
-            <div class="stat-card">
-
-                <strong id="profileLevel">
-                    A1
-                </strong>
-
-                <span>
-                    Level
-                </span>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-    <!-- SETTINGS -->
-
-    <section
-        id="settingsPage"
-        class="page"
-    >
-
-        <div class="page-title">
-
-            <span class="small-label">
-                APP
-            </span>
-
-            <h1>
-                Settings
-            </h1>
-
-            <p>
-                Manage your SHOHIN ENGLISH experience.
-            </p>
-
-        </div>
-
-
-        <div class="settings-list">
-
-            <div class="setting-item">
-
-                <div class="setting-icon">
-                    <i class="fa-solid fa-bell"></i>
-                </div>
-
-                <div class="setting-content">
-
-                    <strong>
-                        Notifications
-                    </strong>
-
-                    <span>
-                        Learning reminders
-                    </span>
-
-                </div>
-
-                <input
-                    type="checkbox"
-                    id="notificationsToggle"
-                    checked
-                >
-
-            </div>
-
-
-            <div class="setting-item">
-
-                <div class="setting-icon">
-                    <i class="fa-solid fa-volume-high"></i>
-                </div>
-
-                <div class="setting-content">
-
-                    <strong>
-                        Sound
-                    </strong>
-
-                    <span>
-                        Lesson sounds
-                    </span>
-
-                </div>
-
-                <input
-                    type="checkbox"
-                    id="soundToggle"
-                    checked
-                >
-
-            </div>
-
-        </div>
-
-
-        <button
-            data-action="logout"
-            class="danger-button"
-        >
-            <i class="fa-solid fa-right-from-bracket"></i>
-            Logout
-        </button>
-
-    </section>
-
-</main>
-
-
-<!-- =====================================================
-     BOTTOM NAVIGATION
-     ===================================================== -->
-
-<nav class="bottom-navigation">
-
-    <button
-        data-page="home"
-        class="active"
-    >
-
-        <i class="fa-solid fa-house"></i>
-
+      <button class="menu-item">
+        👤
         <span>
-            Home
+          Guest profile
+          <small>No account required</small>
         </span>
+      </button>
 
-    </button>
 
-
-    <button data-page="courses">
-
-        <i class="fa-solid fa-graduation-cap"></i>
-
+      <button class="menu-item">
+        📚
         <span>
-            Courses
+          Lessons
+          <small>Continue learning</small>
         </span>
+      </button>
 
-    </button>
 
-
-    <button data-page="vocabulary">
-
-        <i class="fa-solid fa-book"></i>
-
+      <button class="menu-item">
+        🏆
         <span>
-            Words
+          Achievements
+          <small>Your learning results</small>
         </span>
+      </button>
 
-    </button>
 
-
-    <button data-page="profile">
-
-        <i class="fa-solid fa-user"></i>
-
+      <button class="menu-item">
+        🔥
         <span>
-            Profile
+          Streak
+          <small>Keep learning every day</small>
         </span>
+      </button>
 
-    </button>
 
-</nav>
+      <button class="menu-item">
+        ☁️
+        <span>
+          Save progress
+          <small>Account can be added later</small>
+        </span>
+      </button>
 
-</div><!-- =========================================================
-     GLOBAL LOADING
-     ========================================================= --><div
-    id="globalLoading"
-    class="global-loading hidden"
-><div class="loading-spinner"></div>
 
-<span>
-    Loading...
-</span>
+      <button class="menu-item">
+        ⚙️
+        <span>
+          Settings
+          <small>App preferences</small>
+        </span>
+      </button>
 
-</div><!-- =========================================================
-     TOAST
-     ========================================================= --><div
-    id="toast"
-    class="toast"
-></div><!-- =========================================================
-     JAVASCRIPT
-     ========================================================= --><script type="module" src="js/app.js"></script></body>
+    </aside>
+
+  </div>
+
+
+  <!-- =========================
+       BASIC START LOGIC
+  ========================= -->
+
+  <script>
+
+    const splash = document.getElementById("splash");
+    const app = document.getElementById("app");
+
+    const menu = document.getElementById("menu");
+    const openMenu = document.getElementById("openMenu");
+    const closeMenu = document.getElementById("closeMenu");
+
+    /*
+      SHOHIN ENGLISH
+      GUEST MODE
+
+      No login.
+      No registration.
+      No Firebase Auth required.
+
+      Progress will later be connected
+      to storage.js / localStorage.
+    */
+
+    window.addEventListener("load", () => {
+
+      setTimeout(() => {
+
+        splash.style.display = "none";
+        app.style.display = "block";
+
+      }, 1000);
+
+    });
+
+
+    /* MENU */
+
+    openMenu.addEventListener("click", () => {
+      menu.style.display = "block";
+    });
+
+
+    closeMenu.addEventListener("click", () => {
+      menu.style.display = "none";
+    });
+
+
+    menu.addEventListener("click", (event) => {
+
+      if (event.target === menu) {
+        menu.style.display = "none";
+      }
+
+    });
+
+
+    /* LEVEL SELECTION */
+
+    document.querySelectorAll(".level").forEach(level => {
+
+      level.addEventListener("click", () => {
+
+        const selectedLevel = level.dataset.level;
+
+        localStorage.setItem(
+          "shohinEnglishSelectedLevel",
+          selectedLevel
+        );
+
+        alert(
+          "Level " +
+          selectedLevel +
+          " selected.\nLessons will open here."
+        );
+
+      });
+
+    });
+
+
+    /* START LEARNING */
+
+    document
+      .getElementById("startLearning")
+      .addEventListener("click", () => {
+
+        const savedLevel =
+          localStorage.getItem(
+            "shohinEnglishSelectedLevel"
+          );
+
+        if (savedLevel) {
+
+          alert(
+            "Continue with " +
+            savedLevel +
+            " lessons."
+          );
+
+        } else {
+
+          alert(
+            "Choose your English level first."
+          );
+
+        }
+
+      });
+
+
+    /* SIMPLE LOCAL PROGRESS */
+
+    function loadLocalProgress() {
+
+      const progress =
+        JSON.parse(
+          localStorage.getItem(
+            "shohinEnglishProgress"
+          )
+        ) || {
+          percent: 0
+        };
+
+
+      const percent =
+        Math.max(
+          0,
+          Math.min(100, Number(progress.percent) || 0)
+        );
+
+
+      document.getElementById(
+        "progressPercent"
+      ).textContent = percent + "%";
+
+
+      document.getElementById(
+        "progressFill"
+      ).style.width = percent + "%";
+
+    }
+
+
+    loadLocalProgress();
+
+  </script>
+
+
+  <!--
+    Later we will connect:
+
+    js/app.js
+    js/storage.js
+    js/lessons.js
+    js/tests.js
+
+    IMPORTANT:
+    No mandatory login.
+    Guest mode is the default.
+  -->
+
+</body>
 </html>
