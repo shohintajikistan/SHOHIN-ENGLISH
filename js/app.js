@@ -1,246 +1,401 @@
-/*
-==================================================
-SHOHIN ENGLISH
-APP CONTROLLER
-==================================================
+// ======================================================
+// SHOHIN ENGLISH — APP CONTROLLER
+// Каркас приложения
+// Контент уроков добавляется позже через Admin Panel
+// ======================================================
 
-Guest-first application.
+document.addEventListener("DOMContentLoaded", function () {
 
-No mandatory:
-- Login
-- Registration
-- Firebase Auth
+  startApplication();
 
-Progress:
-- localStorage
-- js/storage.js
+});
 
-==================================================
-*/
 
-document.addEventListener("DOMContentLoaded", () => {
+// ======================================================
+// START APPLICATION
+// ======================================================
 
-  /* ==================================================
-     ELEMENTS
-  ================================================== */
+function startApplication() {
 
-  const splash =
-    document.getElementById("splash");
+  initializeStorage();
 
-  const app =
-    document.getElementById("app");
+  setupMenu();
+
+  setupLevels();
+
+  setupDailyButton();
+
+  setupNavigation();
+
+  setupMenuActions();
+
+  loadUserProgress();
+
+  hideSplash();
+
+}
+
+
+// ======================================================
+// STORAGE
+// ======================================================
+
+function initializeStorage() {
+
+  if (!window.SHOHINStorage) {
+    console.error("SHOHIN Storage not found");
+    return;
+  }
+
+  window.SHOHINStorage.get();
+
+}
+
+
+// ======================================================
+// LOAD PROGRESS
+// ======================================================
+
+function loadUserProgress() {
+
+  if (!window.SHOHINStorage) {
+    return;
+  }
+
+  const data = window.SHOHINStorage.get();
+
+  if (!data) {
+    return;
+  }
+
+  const totalLessons = 180;
+
+  const completed =
+    Array.isArray(data.completedLessons)
+      ? data.completedLessons.length
+      : 0;
+
+  const percent = Math.min(
+    100,
+    Math.round((completed / totalLessons) * 100)
+  );
+
+
+  const progressText =
+    document.getElementById("overallProgress");
+
+  const progressBar =
+    document.getElementById("overallProgressBar");
+
+
+  if (progressText) {
+    progressText.textContent =
+      `${percent}%`;
+  }
+
+
+  if (progressBar) {
+    progressBar.style.width =
+      `${percent}%`;
+  }
+
+}
+
+
+// ======================================================
+// LEVELS
+// ======================================================
+
+function setupLevels() {
+
+  const levelButtons =
+    document.querySelectorAll(".level");
+
+
+  levelButtons.forEach(function (button) {
+
+    button.addEventListener("click", function () {
+
+      const level =
+        button.dataset.level;
+
+      if (!level) {
+        return;
+      }
+
+      selectLevel(level);
+
+    });
+
+  });
+
+}
+
+
+// ======================================================
+// SELECT LEVEL
+// ======================================================
+
+function selectLevel(level) {
+
+  if (!window.SHOHINStorage) {
+    return;
+  }
+
+
+  window.SHOHINStorage.setLevel(level);
+
+
+  if (
+    window.SHOHINLessonScreen &&
+    typeof window.SHOHINLessonScreen.open === "function"
+  ) {
+
+    window.SHOHINLessonScreen.open(level);
+
+  }
+
+}
+
+
+// ======================================================
+// DAILY BUTTON
+// ======================================================
+
+function setupDailyButton() {
+
+  const button =
+    document.getElementById("dailyButton");
+
+
+  if (!button) {
+    return;
+  }
+
+
+  button.addEventListener("click", function () {
+
+    const data =
+      window.SHOHINStorage?.get();
+
+
+    const level =
+      data?.selectedLevel || "A1";
+
+
+    if (
+      window.SHOHINLessonScreen &&
+      typeof window.SHOHINLessonScreen.open === "function"
+    ) {
+
+      window.SHOHINLessonScreen.open(level);
+
+    }
+
+  });
+
+}
+
+
+// ======================================================
+// BOTTOM NAVIGATION
+// ======================================================
+
+function setupNavigation() {
+
+  const navItems =
+    document.querySelectorAll(".nav-item");
+
+
+  navItems.forEach(function (item) {
+
+    item.addEventListener("click", function () {
+
+      const action =
+        item.dataset.nav;
+
+
+      navItems.forEach(function (nav) {
+
+        nav.classList.remove("active");
+
+      });
+
+
+      item.classList.add("active");
+
+
+      if (action === "home") {
+
+        showHome();
+
+      }
+
+
+      if (action === "lessons") {
+
+        openSelectedLessons();
+
+      }
+
+
+      if (action === "progress") {
+
+        showProgress();
+
+      }
+
+
+      if (action === "profile") {
+
+        showProfile();
+
+      }
+
+    });
+
+  });
+
+}
+
+
+// ======================================================
+// SHOW HOME
+// ======================================================
+
+function showHome() {
+
+  closeAllScreens();
+
+  const home =
+    document.getElementById("homeScreen");
+
+
+  if (home) {
+    home.style.display = "block";
+  }
+
+
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"
+  });
+
+}
+
+
+// ======================================================
+// OPEN SELECTED LESSONS
+// ======================================================
+
+function openSelectedLessons() {
+
+  const data =
+    window.SHOHINStorage?.get();
+
+
+  const level =
+    data?.selectedLevel || "A1";
+
+
+  if (
+    window.SHOHINLessonScreen &&
+    typeof window.SHOHINLessonScreen.open === "function"
+  ) {
+
+    window.SHOHINLessonScreen.open(level);
+
+  }
+
+}
+
+
+// ======================================================
+// PROGRESS
+// ======================================================
+
+function showProgress() {
+
+  const data =
+    window.SHOHINStorage?.get();
+
+
+  if (!data) {
+    return;
+  }
+
+
+  const completedLessons =
+    data.completedLessons?.length || 0;
+
+
+  const completedTests =
+    data.completedTests?.length || 0;
+
+
+  alert(
+    "SHOHIN ENGLISH\n\n" +
+
+    "Lessons completed: " +
+    completedLessons +
+
+    "\nTests completed: " +
+    completedTests
+  );
+
+}
+
+
+// ======================================================
+// PROFILE
+// ======================================================
+
+function showProfile() {
+
+  const data =
+    window.SHOHINStorage?.get();
+
+
+  if (!data) {
+    return;
+  }
+
+
+  alert(
+    "SHOHIN ENGLISH\n\n" +
+    "Guest Mode\n\n" +
+    "Your progress is saved on this device."
+  );
+
+}
+
+
+// ======================================================
+// MENU
+// ======================================================
+
+function setupMenu() {
 
   const menu =
     document.getElementById("menu");
 
-  const openMenu =
-    document.getElementById("openMenu");
+  const openButton =
+    document.getElementById("menuButton");
 
-  const closeMenu =
-    document.getElementById("closeMenu");
+  const closeButton =
+    document.getElementById("menuClose");
 
-  const progressPercent =
-    document.getElementById("progressPercent");
+  const overlay =
+    document.getElementById("menuOverlay");
 
-  const progressFill =
-    document.getElementById("progressFill");
 
+  if (openButton) {
 
-  /* ==================================================
-     START APP
-  ================================================== */
-
-  startApplication();
-
-
-  function startApplication() {
-
-    initializeStorage();
-
-    loadUserProgress();
-
-    setupMenu();
-
-    setupLevels();
-
-    setupDailyButton();
-
-    setupNavigation();
-
-    hideSplash();
-
-  }
-
-
-  /* ==================================================
-     STORAGE
-  ================================================== */
-
-  function initializeStorage() {
-
-    if (
-      typeof window.SHOHINStorage ===
-      "undefined"
-    ) {
-
-      console.warn(
-        "SHOHINStorage is not loaded."
-      );
-
-      return;
-
-    }
-
-    SHOHINStorage.get();
-
-  }
-
-
-  /* ==================================================
-     SPLASH
-  ================================================== */
-
-  function hideSplash() {
-
-    setTimeout(() => {
-
-      if (splash) {
-
-        splash.classList.add("hide");
-
-      }
-
-      if (app) {
-
-        app.style.display = "block";
-
-      }
-
-    }, 1000);
-
-  }
-
-
-  /* ==================================================
-     LOAD USER PROGRESS
-  ================================================== */
-
-  function loadUserProgress() {
-
-    if (
-      typeof window.SHOHINStorage ===
-      "undefined"
-    ) {
-
-      return;
-
-    }
-
-
-    const data =
-      SHOHINStorage.get();
-
-
-    const completedLessons =
-      data.completedLessons.length;
-
-
-    /*
-      Current planned course:
-
-      A1 = 20
-      A2 = 25
-      B1 = 30
-      B2 = 30
-      C1 = 35
-      C2 = 40
-
-      Total = 180 lessons
-    */
-
-    const totalLessons = 180;
-
-
-    const percent =
-      Math.min(
-        100,
-        Math.round(
-          (
-            completedLessons /
-            totalLessons
-          ) * 100
-        )
-      );
-
-
-    if (progressPercent) {
-
-      progressPercent.textContent =
-        percent + "%";
-
-    }
-
-
-    if (progressFill) {
-
-      progressFill.style.width =
-        percent + "%";
-
-    }
-
-  }
-
-
-  /* ==================================================
-     MENU
-  ================================================== */
-
-  function setupMenu() {
-
-    if (
-      !menu ||
-      !openMenu ||
-      !closeMenu
-    ) {
-
-      return;
-
-    }
-
-
-    openMenu.addEventListener(
+    openButton.addEventListener(
       "click",
-      () => {
+      function () {
 
-        menu.classList.add("show");
-
-      }
-    );
-
-
-    closeMenu.addEventListener(
-      "click",
-      () => {
-
-        menu.classList.remove("show");
-
-      }
-    );
-
-
-    menu.addEventListener(
-      "click",
-      (event) => {
-
-        if (
-          event.target === menu
-        ) {
-
-          menu.classList.remove(
-            "show"
-          );
-
-        }
+        openMenu();
 
       }
     );
@@ -248,33 +403,13 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
 
-  /* ==================================================
-     LEVELS
-  ================================================== */
+  if (closeButton) {
 
-  function setupLevels() {
+    closeButton.addEventListener(
+      "click",
+      function () {
 
-    const levelButtons =
-      document.querySelectorAll(
-        ".level"
-      );
-
-
-    levelButtons.forEach(
-      (button) => {
-
-        button.addEventListener(
-          "click",
-          () => {
-
-            const level =
-              button.dataset.level;
-
-
-            selectLevel(level);
-
-          }
-        );
+        closeMenu();
 
       }
     );
@@ -282,380 +417,223 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
 
-  function selectLevel(level) {
+  if (overlay) {
 
-    if (
-      typeof window.SHOHINStorage !==
-      "undefined"
-    ) {
+    overlay.addEventListener(
+      "click",
+      function () {
 
-      SHOHINStorage.setLevel(
-        level
-      );
+        closeMenu();
 
-    }
-
-
-    /*
-      Temporary message.
-
-      Later this will open:
-      Levels → Lessons → Lesson 1
-    */
-
-    showMessage(
-      `${level} selected.`
+      }
     );
-
-
-    loadUserProgress();
 
   }
 
-
-  /* ==================================================
-     DAILY BUTTON
-  ================================================== */
-
-  function setupDailyButton() {
-
-    const button =
-      document.getElementById(
-        "startLearning"
-      );
+}
 
 
-    if (!button) {
+// ======================================================
+// OPEN MENU
+// ======================================================
 
-      return;
+function openMenu() {
 
-    }
+  const menu =
+    document.getElementById("menu");
 
 
-    button.addEventListener(
+  if (menu) {
+    menu.classList.add("open");
+  }
+
+}
+
+
+// ======================================================
+// CLOSE MENU
+// ======================================================
+
+function closeMenu() {
+
+  const menu =
+    document.getElementById("menu");
+
+
+  if (menu) {
+    menu.classList.remove("open");
+  }
+
+}
+
+
+// ======================================================
+// MENU ACTIONS
+// ======================================================
+
+function setupMenuActions() {
+
+  const items =
+    document.querySelectorAll(
+      ".menu-item"
+    );
+
+
+  items.forEach(function (item) {
+
+    item.addEventListener(
       "click",
-      () => {
+      function () {
 
-        const level =
-          getSelectedLevel();
+        const action =
+          item.dataset.menuAction;
 
 
-        if (!level) {
+        closeMenu();
 
-          showMessage(
-            "Choose your English level first."
-          );
 
-          return;
+        if (action === "lessons") {
+
+          openSelectedLessons();
 
         }
 
 
-        openLessons(level);
-
-      }
-    );
-
-  }
-
-
-  /* ==================================================
-     GET LEVEL
-  ================================================== */
-
-  function getSelectedLevel() {
-
-    if (
-      typeof window.SHOHINStorage ===
-      "undefined"
-    ) {
-
-      return null;
-
-    }
-
-
-    return SHOHINStorage.getLevel();
-
-  }
-
-
-  /* ==================================================
-     OPEN LESSONS
-  ================================================== */
-
-  function openLessons(level) {
-
-    /*
-      Temporary.
-
-      Next development step:
-      create the real Lessons screen.
-    */
-
-    showMessage(
-      `Opening ${level} lessons...`
-    );
-
-  }
-
-
-  /* ==================================================
-     NAVIGATION
-  ================================================== */
-
-  function setupNavigation() {
-
-    const homeNav =
-      document.getElementById(
-        "homeNav"
-      );
-
-    const lessonsNav =
-      document.getElementById(
-        "lessonsNav"
-      );
-
-    const progressNav =
-      document.getElementById(
-        "progressNav"
-      );
-
-    const profileNav =
-      document.getElementById(
-        "profileNav"
-      );
-
-
-    if (homeNav) {
-
-      homeNav.addEventListener(
-        "click",
-        () => {
-
-          setActiveNavigation(
-            homeNav
-          );
-
-          window.scrollTo({
-            top: 0,
-            behavior: "smooth"
-          });
-
-        }
-      );
-
-    }
-
-
-    if (lessonsNav) {
-
-      lessonsNav.addEventListener(
-        "click",
-        () => {
-
-          setActiveNavigation(
-            lessonsNav
-          );
-
-          const level =
-            getSelectedLevel();
-
-
-          if (!level) {
-
-            showMessage(
-              "Choose a level first."
-            );
-
-            return;
-
-          }
-
-
-          openLessons(level);
-
-        }
-      );
-
-    }
-
-
-    if (progressNav) {
-
-      progressNav.addEventListener(
-        "click",
-        () => {
-
-          setActiveNavigation(
-            progressNav
-          );
+        if (action === "progress") {
 
           showProgress();
 
         }
-      );
-
-    }
 
 
-    if (profileNav) {
+        if (action === "achievements") {
 
-      profileNav.addEventListener(
-        "click",
-        () => {
-
-          setActiveNavigation(
-            profileNav
-          );
-
-          showProfile();
-
-        }
-      );
-
-    }
-
-  }
-
-
-  /* ==================================================
-     ACTIVE NAVIGATION
-  ================================================== */
-
-  function setActiveNavigation(
-    activeButton
-  ) {
-
-    document
-      .querySelectorAll(
-        ".nav-btn"
-      )
-      .forEach(
-        button => {
-
-          button.classList.remove(
-            "active"
+          alert(
+            "Achievements\n\nComing later."
           );
 
         }
-      );
 
 
-    if (activeButton) {
+        if (action === "streak") {
 
-      activeButton.classList.add(
-        "active"
-      );
-
-    }
-
-  }
+          const data =
+            window.SHOHINStorage?.get();
 
 
-  /* ==================================================
-     PROGRESS SCREEN
-  ================================================== */
-
-  function showProgress() {
-
-    if (
-      typeof window.SHOHINStorage ===
-      "undefined"
-    ) {
-
-      return;
-
-    }
+          const streak =
+            data?.streak?.current || 0;
 
 
-    const data =
-      SHOHINStorage.get();
+          alert(
+            "Current streak: " +
+            streak +
+            " days"
+          );
+
+        }
 
 
-    const lessons =
-      data.statistics.lessonsCompleted;
+        if (action === "save") {
+
+          saveProgress();
+
+        }
 
 
-    const words =
-      data.statistics.wordsLearned;
+        if (action === "settings") {
 
+          alert(
+            "Settings\n\nComing later."
+          );
 
-    const tests =
-      data.statistics.testsCompleted;
+        }
 
-
-    const streak =
-      data.streak.current;
-
-
-    showMessage(
-      `Progress
-
-Lessons: ${lessons}
-Words: ${words}
-Tests: ${tests}
-Streak: ${streak} days`
+      }
     );
 
+  });
+
+}
+
+
+// ======================================================
+// SAVE PROGRESS
+// ======================================================
+
+function saveProgress() {
+
+  if (!window.SHOHINStorage) {
+    return;
   }
 
 
-  /* ==================================================
-     PROFILE
-  ================================================== */
-
-  function showProfile() {
-
-    const data =
-      SHOHINStorage
-        ? SHOHINStorage.get()
-        : null;
+  const data =
+    window.SHOHINStorage.get();
 
 
-    if (!data) {
-
-      return;
-
-    }
+  window.SHOHINStorage.save(data);
 
 
-    const level =
-      data.selectedLevel ||
-      "Not selected";
+  alert(
+    "Progress saved on this device."
+  );
+
+}
 
 
-    showMessage(
-      `Guest Profile
+// ======================================================
+// CLOSE ALL SCREENS
+// ======================================================
 
-Level: ${level}
+function closeAllScreens() {
 
-Your progress is saved
-on this device.`
-    );
+  const home =
+    document.getElementById("homeScreen");
 
+  const lessons =
+    document.getElementById("lessonsScreen");
+
+  const player =
+    document.getElementById("lessonPlayerScreen");
+
+
+  if (home) {
+    home.style.display = "none";
   }
 
 
-  /* ==================================================
-     MESSAGE
-  ================================================== */
-
-  function showMessage(
-    message
-  ) {
-
-    /*
-      For now we use a simple
-      browser dialog.
-
-      Later we will replace this
-      with a professional SHOHIN
-      notification/toast system.
-    */
-
-    alert(message);
-
+  if (lessons) {
+    lessons.style.display = "none";
   }
 
-});
+
+  if (player) {
+    player.style.display = "none";
+  }
+
+}
+
+
+// ======================================================
+// SPLASH
+// ======================================================
+
+function hideSplash() {
+
+  const splash =
+    document.getElementById("splash");
+
+
+  if (!splash) {
+    return;
+  }
+
+
+  setTimeout(function () {
+
+    splash.classList.add("hide");
+
+  }, 900);
+
+}
