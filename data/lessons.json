@@ -1,0 +1,48 @@
+{
+  "version": 1,
+  "course": {
+    "id": "shohin-english",
+    "name": "SHOHIN ENGLISH",
+    "language": "English",
+    "levels": [
+      {
+        "id": "A1",
+        "title": "A1 Beginner",
+        "lessons": 20
+      },
+      {
+        "id": "A2",
+        "title": "A2 Elementary",
+        "lessons": 25
+      },
+      {
+        "id": "B1",
+        "title": "B1 Intermediate",
+        "lessons": 30
+      },
+      {
+        "id": "B2",
+        "title": "B2 Upper-Intermediate",
+        "lessons": 30
+      },
+      {
+        "id": "C1",
+        "title": "C1 Advanced",
+        "lessons": 35
+      },
+      {
+        "id": "C2",
+        "title": "C2 Proficiency",
+        "lessons": 40
+      }
+    ]
+  },
+
+  "lessons": [],
+
+  "videos": [],
+
+  "vocabulary": [],
+
+  "tests": []
+}
